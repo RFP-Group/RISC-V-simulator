@@ -6,8 +6,9 @@ def clone_repo(line_from_file, third_party_path) :
 	repo_name = parsed_string[0]
 	repo_link = parsed_string[1]
 	repo_branch = parsed_string[2]
-	print(f"Clonning {repo_name} in {third_party_path}")
-	os.system(f"git clone --verbose {repo_link} -b {repo_branch} {third_party_path}/{repo_name}")
+	if (not os.path.exists(third_party_path+"/"+repo_name)):
+		print(f"Clonning {repo_name} in {third_party_path}")
+		os.system(f"git clone --verbose {repo_link} -b {repo_branch} --depth=1 {third_party_path}/{repo_name}")
 
 if __name__ == '__main__' :
 	list_path = sys.argv[1]
