@@ -27,3 +27,7 @@ add_custom_target(
 if (NOT INSTALL_RES EQUAL 0)
 	message(FATAL_ERROR "Unable to install required third-party dependencies")
 endif()
+
+add_subdirectory("simulator")
+add_subdirectory("third-party/googletest")
+add_subdirectory("memory")
