@@ -1,0 +1,96 @@
+name: CI for RISC-V simulator project
+on:
+  push:
+    branches:
+        - '*'
+    pull_request:
+        - master
+
+jobs:
+    setup:
+        name: Setup project
+        runs-on: ubuntu-22.04
+        env:
+            CC: gcc-12
+            CXX: g++-12
+        steps:
+            - uses: actions/checkout@v3
+            - run: |
+                  sudo apt-get update
+                  sudo apt-get install -y cmake ninja-build g++-12 libstdc++-12-dev ruby-full libelf-dev
+            - run: /bin/bash .ci/setup.sh
+            - name: Cache cmake and third party
+              uses: actions/upload-artifact@v2
+              with:
+                name: cmake_cache
+                path: |
+                  build
+                  third-party
+    build:
+        needs: setup
+        name: Build project
+        runs-on: ubuntu-22.04
+        env:
+            CC: gcc-12
+            CXX: g++-12
+        steps:
+            - uses: actions/checkout@v3
+            - name: Download artifact
+              uses: actions/download-artifact@v2
+              with:
+                name: cmake_cache
+            - run: |
+                  sudo apt-get update
+                  sudo apt-get install -y ninja-build g++-12 libstdc++-12-dev ruby-full libelf-dev
+            - run: /bin/bash .ci/build.sh
+    run-tests:
+        needs: setup
+        name: Run tests
+        runs-on: ubuntu-22.04
+        env:
+            CC: gcc-12
+            CXX: g++-12
+        steps:
+            - uses: actions/checkout@v3
+            - name: Download artifact
+              uses: actions/download-artifact@v2
+              with:
+                name: cmake_cache
+            - run: |
+                  sudo apt-get update
+                  sudo apt-get install -y ninja-build g++-12 libstdc++-12-dev ruby-full libelf-dev
+            - run: /bin/bash .ci/run_tests.sh
+    format-check:
+        needs: setup
+        name: Check clang-format
+        runs-on: ubuntu-22.04
+        env:
+            CC: gcc-12
+            CXX: g++-12
+        steps:
+            - uses: actions/checkout@v3
+            - name: Download artifact
+              uses: actions/download-artifact@v2
+              with:
+                name: cmake_cache
+            - run: |
+                  sudo apt-get update
+                  sudo apt-get install -y ninja-build clang-format
+            - run: /bin/bash .ci/format_check.sh
+    tidy-check:
+        needs: setup
+        name: Check clang-tidy
+        runs-on: ubuntu-22.04
+        env:
+            CC: gcc-12
+            CXX: g++-12
+        steps:
+            - uses: actions/checkout@v3
+            - name: Download artifact
+              uses: actions/download-artifact@v2
+              with:
+                name: cmake_cache
+            - run: |
+                  sudo apt-get update
+                  sudo apt-get install -y ninja-build clang-tidy
+            - run: /bin/bash .ci/tidy_check.sh
