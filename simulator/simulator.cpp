@@ -1,11 +1,13 @@
 #include <iostream>
 
 namespace simulator {
-int Main(int argc, const char **argv) {
+int Main(int argc, const char **argv)
+{
     return 0;
 }
-} // namespace simulator
+}  // namespace simulator
 
-int main(int argc, const char **argv) {
+int main(int argc, const char **argv)
+{
     return simulator::Main(argc, argv);
 }

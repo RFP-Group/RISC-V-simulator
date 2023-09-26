@@ -19,4 +19,4 @@
     NO_MOVE_CTOR(TypeName)         \
     NO_MOVE_OPERATOR(TypeName)
 
-#endif //CONFIGS_MACROS_HPP
+#endif  // CONFIGS_MACROS_HPP
