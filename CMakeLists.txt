@@ -14,6 +14,8 @@ set(PROJECT_SCRIPTS ${PROJECT_ROOT}/scripts)
 
 find_package(Python3 REQUIRED)
 
+include(cmake/Generation.cmake)
+
 execute_process(
 	COMMAND ${Python3_EXECUTABLE} ${PROJECT_SCRIPTS}/install_third_party.py
 		${PROJECT_SCRIPTS}/third_party_list.txt ${PROJECT_THIRD_PARTY}
@@ -37,6 +39,7 @@ if (NOT INSTALL_RES EQUAL 0)
 	message(FATAL_ERROR "Unable to install required third-party dependencies")
 endif()
 
-add_subdirectory("simulator")
-add_subdirectory("third-party/googletest")
-add_subdirectory("memory")
+add_subdirectory(simulator)
+add_subdirectory(third-party/googletest)
+add_subdirectory(memory)
+add_subdirectory(interpreter)
