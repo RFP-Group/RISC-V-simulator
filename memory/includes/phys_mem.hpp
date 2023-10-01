@@ -3,15 +3,12 @@
 
 #include <vector>
 #include <string>
-#include <libelf.h>
-#include <gelf.h>
-#include "macros.hpp"
-#include "common/mem.hpp"
+#include "page.hpp"
 
 namespace simulator::mem {
 // TODO(Mirageinvo): remove initial_page_number and introduce algorithm for page number increasing
 //                   because it looks weird to alloc all 16_GB at once
-constexpr uint32_t initial_page_number = 4;
+constexpr const uint32_t initial_page_number = 4;
 
 class PhysMem final {
 public:
@@ -22,21 +19,17 @@ public:
     [[nodiscard]] static PhysMem *CreatePhysMem(uint64_t total_size);
     static bool Destroy(PhysMem *phys_mem);
 
-    std::vector<char> *GetMemory();
-    void LoadElfFile(const std::string &name);
+    template <bool AllocPageIfNeeded>
+    uint8_t *GetAddr(uint64_t page_id, uint64_t offset);
+    Page *GetPage(uint64_t page_id);
+    std::pair<uint64_t, uint64_t> NextAfterLastOccupiedByte() const;
 
 private:
     PhysMem(uint64_t size);
     ~PhysMem() = default;
 
-    uint32_t pages_used_ = 0;
     uint64_t total_size_;
-    uint64_t entry_point_;
-
-    // TODO(Mirageinvo): change uint32_t to Page class. There is no need in using templates
-    std::vector<char> pages_;
-
-    void validateElfHeader(const GElf_Ehdr &ehdr) const;
+    std::vector<Page> pages_;
 };
 }  // namespace simulator::mem
 

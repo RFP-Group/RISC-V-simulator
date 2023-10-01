@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <climits>
+#include <cstdint>
 
 namespace simulator {
 
