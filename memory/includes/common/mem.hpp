@@ -27,7 +27,28 @@ constexpr uint64_t operator"" _GB()
     return GetShiftedMemoryValue<SHIFT_GB, 0, 0, Cs...>();
 }
 
-constexpr uint32_t page_size = 4_KB;
+template <typename T>
+constexpr uintptr_t ToUintPtr(T *ptr)
+{
+    return reinterpret_cast<uintptr_t>(ptr);
+}
+
+constexpr uintptr_t ToUintPtr(std::nullptr_t)
+{
+    return ToUintPtr(static_cast<void *>(nullptr));
+}
+
+template <typename T>
+constexpr T *ToNativePtr(uintptr_t ptr)
+{
+    return reinterpret_cast<T *>(ptr);
+}
+
+inline void *ToVoidPtr(uintptr_t ptr)
+{
+    return reinterpret_cast<void *>(ptr);
+}
+
 }  // namespace simulator
 
 #endif  // CONFIGS_MEM_HPP
