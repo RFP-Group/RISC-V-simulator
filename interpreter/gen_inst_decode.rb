@@ -41,17 +41,21 @@ class ISA
 		string
 	end
 
+	def get_inst_name(node)
+		node['mnemonic'].gsub('.', '_').upcase
+	end
+
 	def get_func_name(node)
-		"#{DECODER_FUNCTION_PREFIX_NAME}_#{node['mnemonic'].gsub('.', '_')}(raw_inst)"
+		"#{DECODER_FUNCTION_PREFIX_NAME}_#{get_inst_name(node)}(raw_inst)"
 	end
 
 	def get_decl_class_func_name(node)
 		prefix = "#{INSTRUCTION_CLASS_NAME} #{DECODER_CLASS_NAME}::#{DECODER_FUNCTION_PREFIX_NAME}_"
-		"#{prefix}#{node['mnemonic'].gsub('.', '_')}(uint32_t raw_inst)"
+		"#{prefix}#{get_inst_name(node)}(uint32_t raw_inst)"
 	end
 
 	def get_decl_func_name(node)
-		"#{INSTRUCTION_CLASS_NAME} #{DECODER_FUNCTION_PREFIX_NAME}_#{node['mnemonic'].gsub('.', '_')}(uint32_t raw_inst)"
+		"#{INSTRUCTION_CLASS_NAME} #{DECODER_FUNCTION_PREFIX_NAME}_#{get_inst_name(node)}(uint32_t raw_inst)"
 	end
 
 	def reg?(field)
