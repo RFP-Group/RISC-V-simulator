@@ -16,9 +16,14 @@ public:
     static bool Destroy(VirtualMem *virtual_mem);
     bool LoadByteSequence(uintptr_t addr, uint8_t *chrs, uint64_t length);
     std::vector<uint8_t> ReadByteSequence(uintptr_t addr, uint64_t length);
+    void LoadByte(uintptr_t addr, uint8_t chr);
     uint8_t ReadByte(uintptr_t addr) const;
+    void LoadTwoBytesFast(uintptr_t addr, uint16_t value);
     uint16_t ReadTwoBytesFast(uintptr_t addr) const;
+    void LoadFourBytesFast(uintptr_t addr, uint32_t value);
     uint32_t ReadFourBytesFast(uintptr_t addr) const;
+    void LoadEightBytesFast(uintptr_t addr, uint64_t value);
+    uint64_t ReadEightBytesFast(uintptr_t addr) const;
     void LoadElfFile(const std::string &name);
     [[nodiscard]] uintptr_t GetNextContinuousBlock(uint64_t length);
 
@@ -28,7 +33,6 @@ private:
     uint64_t GetPageIdByAddress(uintptr_t addr) const;
     uint64_t GetPageOffsetByAddress(uintptr_t addr) const;
     Page *GetPageByAddress(uintptr_t addr);
-    void LoadByte(uintptr_t addr, uint8_t chr);
     template <bool AllocPageIfNeeded>
     uint8_t *GetPhysAddress(uintptr_t addr) const;
     void IncrementOccupiedValue(uintptr_t addr, uint64_t length);

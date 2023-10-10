@@ -15,6 +15,17 @@ constexpr uint64_t GetPowerOfTwo()
 }
 
 template <uint32_t power>
+constexpr uint64_t TwoPow()
+{
+    static_assert(power >= 0, "Power must be non-negative");
+    if constexpr (power == 0) {
+        return 1;
+    } else {
+        return TwoPow<power - 1>() * 2;
+    }
+}
+
+template <uint32_t power>
 constexpr uint64_t TenPow()
 {
     static_assert(power >= 0, "Power must be non-negative");
