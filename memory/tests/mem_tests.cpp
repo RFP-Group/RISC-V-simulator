@@ -19,7 +19,7 @@ TEST(VirtualMemTest, VirtualMemSmallLoadReadSequenceTest)
     virtual_mem->LoadByteSequence(addr_to_load, arr.data(), arr.size());
     std::vector<uint8_t> stored_arr = virtual_mem->ReadByteSequence(addr_to_load, arr.size());
     ASSERT_EQ(arr, stored_arr);
-    ASSERT_TRUE(mem::VirtualMem::Destroy(virtual_mem)) << "Couldn't successfully destroy VirtualMem";
+    ASSERT_TRUE(mem::VirtualMem::Destroy(virtual_mem));
 }
 
 TEST(VirtualMemTest, VirtualMemSmallLoadReadFastTest)
@@ -36,7 +36,19 @@ TEST(VirtualMemTest, VirtualMemSmallLoadReadFastTest)
     ASSERT_EQ(two_bytes, 1285);  // 00000101 00000101
     uint32_t four_bytes = virtual_mem->ReadFourBytesFast(addr_to_load);
     ASSERT_EQ(four_bytes, 4294903045);  // 11111111 11111111 00000101 00000101
-    ASSERT_TRUE(mem::VirtualMem::Destroy(virtual_mem)) << "Couldn't successfully destroy VirtualMem";
+    ASSERT_TRUE(mem::VirtualMem::Destroy(virtual_mem));
+}
+
+TEST(VirtualMemTest, VirtualMemFastLoadReadFastTest)
+{
+    mem::VirtualMem *virtual_mem = mem::VirtualMem::CreateVirtualMem();
+    uintptr_t addr_to_load = virtual_mem->GetNextContinuousBlock(8);
+    virtual_mem->LoadEightBytesFast(addr_to_load, 1);
+    ASSERT_EQ(virtual_mem->ReadTwoBytesFast(addr_to_load), 0);
+    ASSERT_EQ(virtual_mem->ReadEightBytesFast(addr_to_load), 1);
+    ASSERT_EQ(virtual_mem->ReadTwoBytesFast(addr_to_load + 6), 1);
+    ASSERT_EQ(virtual_mem->ReadByte(addr_to_load + 7), 1);
+    ASSERT_TRUE(mem::VirtualMem::Destroy(virtual_mem));
 }
 
 }  // namespace simulator

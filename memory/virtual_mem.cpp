@@ -147,6 +147,14 @@ uint64_t VirtualMem::GetPageOffsetByAddress(uintptr_t addr) const
     return addr & Page::OFFSET_MASK;
 }
 
+void VirtualMem::LoadTwoBytesFast(uintptr_t addr, uint16_t value)
+{
+    uint8_t upper_value = (value & ((TwoPow<8>() - 1) << 8)) >> 8;
+    uint8_t lower_value = value & (TwoPow<8>() - 1);
+    LoadByte(addr, upper_value);
+    LoadByte(addr + 1, lower_value);
+}
+
 uint16_t VirtualMem::ReadTwoBytesFast(uintptr_t addr) const
 {
     uint16_t value = 0;
@@ -154,6 +162,14 @@ uint16_t VirtualMem::ReadTwoBytesFast(uintptr_t addr) const
     value = value << 8;
     value |= ReadByte(addr + 1);
     return value;
+}
+
+void VirtualMem::LoadFourBytesFast(uintptr_t addr, uint32_t value)
+{
+    uint16_t upper_value = (value & ((TwoPow<16>() - 1) << 16)) >> 16;
+    uint16_t lower_value = value & (TwoPow<16>() - 1);
+    LoadTwoBytesFast(addr, upper_value);
+    LoadTwoBytesFast(addr + 2, lower_value);
 }
 
 uint32_t VirtualMem::ReadFourBytesFast(uintptr_t addr) const
@@ -164,6 +180,23 @@ uint32_t VirtualMem::ReadFourBytesFast(uintptr_t addr) const
         value = value << 8;
     }
     value |= ReadByte(addr + 3);
+    return value;
+}
+
+void VirtualMem::LoadEightBytesFast(uintptr_t addr, uint64_t value)
+{
+    uint32_t upper_value = (value & ((TwoPow<32>() - 1) << 32)) >> 32;
+    uint32_t lower_value = value & (TwoPow<32>() - 1);
+    LoadFourBytesFast(addr, upper_value);
+    LoadFourBytesFast(addr + 4, lower_value);
+}
+
+uint64_t VirtualMem::ReadEightBytesFast(uintptr_t addr) const
+{
+    uint64_t value = 0;
+    value |= ReadFourBytesFast(addr);
+    value = value << 4;
+    value |= ReadFourBytesFast(addr + 4);
     return value;
 }
 
