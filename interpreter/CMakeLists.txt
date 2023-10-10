@@ -58,7 +58,7 @@ add_custom_target(interpreter_executor_h_gen DEPENDS ${EXECUTOR_H})
 
 target_link_libraries(interpreter mem)
 
-target_include_directories(interpreter PRIVATE
+target_include_directories(interpreter PUBLIC
 	${PROJECT_ROOT}
 	${CMAKE_CURRENT_BINARY_DIR}
 )

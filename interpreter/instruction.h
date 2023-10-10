@@ -11,7 +11,7 @@ using Register_t = uint8_t;
 using Immediate_t = uint32_t;
 using Opcode_t = uint8_t;
 
-class Instruction {
+class Instruction final {
 public:
     Immediate_t GetShamt()
     {

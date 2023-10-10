@@ -2,7 +2,7 @@
 #include "interpreter/gpr.h"
 #include "interpreter/instruction.h"
 
-namespace simulator {
+namespace simulator::interpreter {
 
 #define NEXT()                                                                 \
     {                                                                          \
@@ -639,4 +639,601 @@ void Executor::exec_LWU(Instruction inst)
     NEXT()
 }
 
-}  // namespace simulator
+void Executor::exec_FENCE(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FENCE_I(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_MUL(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_MULH(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_MULHSU(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_MULHU(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_DIV(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_DIVU(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_REM(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_REMU(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_MULW(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_DIVW(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_DIVUW(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_REMW(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_REMUW(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOADD_W(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOXOR_W(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOOR_W(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOAND_W(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOMIN_W(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOMAX_W(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOMINU_W(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOMAXU_W(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOSWAP_W(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_LR_W(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_SC_W(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOADD_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOXOR_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOOR_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOAND_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOMIN_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOMAX_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOMINU_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOMAXU_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_AMOSWAP_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_LR_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_SC_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_ECALL(Instruction inst)
+{
+    return;
+}
+void Executor::exec_EBREAK(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_URET(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_SRET(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_MRET(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_DRET(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_SFENCE_VMA(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_WFI(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_CSRRW(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_CSRRS(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_CSRRC(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_CSRRWI(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_CSRRSI(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_CSRRCI(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_HFENCE_VVMA(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_HFENCE_GVMA(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FADD_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSUB_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMUL_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FDIV_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSGNJ_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSGNJN_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSGNJX_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMIN_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMAX_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSQRT_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FADD_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSUB_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMUL_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FDIV_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSGNJ_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSGNJN_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSGNJX_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMIN_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMAX_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_S_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_D_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSQRT_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FADD_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSUB_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMUL_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FDIV_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSGNJ_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSGNJN_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSGNJX_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMIN_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMAX_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_S_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_Q_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_D_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_Q_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSQRT_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FLE_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FLT_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FEQ_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FLE_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FLT_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FEQ_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FLE_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FLT_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FEQ_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_W_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_WU_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_L_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_LU_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMV_X_W(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCLASS_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_W_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_WU_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_L_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_LU_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMV_X_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCLASS_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_W_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_WU_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_L_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_LU_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMV_X_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCLASS_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_S_W(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_S_WU(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_S_L(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_S_LU(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMV_W_X(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_D_W(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_D_WU(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_D_L(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_D_LU(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMV_D_X(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_Q_W(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_Q_WU(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_Q_L(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FCVT_Q_LU(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMV_Q_X(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FLW(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FLD(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FLQ(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSW(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSD(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FSQ(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMADD_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMSUB_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FNMSUB_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FNMADD_S(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMADD_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMSUB_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FNMSUB_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FNMADD_D(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMADD_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FMSUB_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FNMSUB_Q(Instruction inst)
+{
+    std::abort();
+}
+void Executor::exec_FNMADD_Q(Instruction inst)
+{
+    std::abort();
+}
+
+}  // namespace simulator::interpreter
