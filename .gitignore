@@ -1,6 +1,7 @@
 # Build directory
 build/
-.vscode
+.vscode/
+.cache/
 
 # Special directory
 third-party/
