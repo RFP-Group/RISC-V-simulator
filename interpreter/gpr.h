@@ -12,7 +12,7 @@ using SRegister = int64_t;
 
 const uint8_t Register_num = 34;
 
-class GPR_file {
+class GPR_file final {
 public:
     enum GPR_n : uint8_t {
         X0 = 0,

@@ -5,9 +5,9 @@
 #include "generated/instructions_decode_gen.h"
 #include "common/bitops.h"
 
-namespace simulator {
+namespace simulator::interpreter {
 
-Instruction Decoder::runImpl (uint32_t raw_inst) {
+Instruction Decoder::RunImpl (uint32_t raw_inst) {
 	Instruction instr;
 	<%=generate_switch_case(@decodertree, "", 0)%>
 	return instr;

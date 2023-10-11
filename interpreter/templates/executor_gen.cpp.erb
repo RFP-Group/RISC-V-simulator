@@ -5,7 +5,7 @@
 #include "interpreter/executor.h"
 #include "interpreter/instruction.h"
 
-namespace simulator {
+namespace simulator::interpreter {
 
 void Executor::RunImpl(Instruction inst) {
 	switch(inst.inst_id) {

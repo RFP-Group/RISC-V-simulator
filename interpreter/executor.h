@@ -5,11 +5,22 @@
 #include "interpreter/gpr.h"
 #include "memory/includes/virtual_mem.hpp"
 
-namespace simulator {
+namespace simulator::interpreter {
 
-class Executor {
+class Executor final {
 public:
+    Executor(mem::VirtualMem *vmem, uintptr_t entry_point) : vmem_(vmem)
+    {
+        gprf_.write(GPR_file::GPR_n::PC, entry_point);
+    };
+    NO_COPY_SEMANTIC(Executor);
+    NO_MOVE_SEMANTIC(Executor);
+
     void RunImpl(Instruction inst);
+    [[nodiscard]] inline Register getPC()
+    {
+        return gprf_.read(GPR_file::GPR_n::PC);
+    };
 
 private:
 #include "generated/executor_gen.h"
@@ -17,6 +28,6 @@ private:
     mem::VirtualMem *vmem_;
 };
 
-}  // namespace simulator
+}  // namespace simulator::interpreter
 
 #endif  // INTERPRETER_EXECUTOR_H

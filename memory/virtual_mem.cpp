@@ -200,7 +200,7 @@ uint64_t VirtualMem::ReadEightBytesFast(uintptr_t addr) const
     return value;
 }
 
-void VirtualMem::LoadElfFile(const std::string &name)
+uintptr_t VirtualMem::LoadElfFile(const std::string &name)
 {
     int fd;
     if ((fd = open(name.c_str(), O_RDONLY, 0777)) < 0)
@@ -217,7 +217,6 @@ void VirtualMem::LoadElfFile(const std::string &name)
         throw std::runtime_error("gelf_getehdr() failed " + std::string(elf_errmsg(-1)));
 
     validateElfHeader(ehdr);
-    entry_point_ = ehdr.e_entry;  // entry point address
 
     size_t n;
     if (elf_getphdrnum(e, &n) != 0)
@@ -239,6 +238,8 @@ void VirtualMem::LoadElfFile(const std::string &name)
 
     elf_end(e);
     close(fd);
+
+    return ehdr.e_entry;
 }
 
 void VirtualMem::validateElfHeader(const GElf_Ehdr &ehdr) const

@@ -24,7 +24,7 @@ public:
     uint32_t ReadFourBytesFast(uintptr_t addr) const;
     void LoadEightBytesFast(uintptr_t addr, uint64_t value);
     uint64_t ReadEightBytesFast(uintptr_t addr) const;
-    void LoadElfFile(const std::string &name);
+    [[nodiscard]] uintptr_t LoadElfFile(const std::string &name);
     [[nodiscard]] uintptr_t GetNextContinuousBlock(uint64_t length);
 
 private:
@@ -40,7 +40,6 @@ private:
     void validateElfHeader(const GElf_Ehdr &ehdr) const;
 
     PhysMem *ram_ = nullptr;
-    uintptr_t entry_point_;
 };
 }  // namespace simulator::mem
 
