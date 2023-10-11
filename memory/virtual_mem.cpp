@@ -223,6 +223,7 @@ uintptr_t VirtualMem::LoadElfFile(const std::string &name)
         throw std::runtime_error("elf_getphdrnum() failed: " + std::string(elf_errmsg(-1)));
 
     GElf_Phdr phdr;
+    std::vector<uint8_t> buff;
     for (int i = 0; i < n; ++i) {
         if (gelf_getphdr(e, i, &phdr) != &phdr)
             throw std::runtime_error("gelf_getphdr() failed: " + std::string(elf_errmsg(-1)));
@@ -230,10 +231,11 @@ uintptr_t VirtualMem::LoadElfFile(const std::string &name)
             continue;
 
         // TODO(Mirageinvo): remove temporary buffer
-        std::vector<uint8_t> buff(phdr.p_vaddr + phdr.p_filesz);
-        pread(fd, buff.data() + phdr.p_vaddr, phdr.p_filesz, phdr.p_offset);
-        uintptr_t addr_to_load = GetNextContinuousBlock(buff.size());
-        LoadByteSequence(addr_to_load, buff.data(), buff.size());
+        if (buff.capacity() < phdr.p_filesz) {
+            buff.resize(phdr.p_filesz);
+        }
+        pread(fd, buff.data(), phdr.p_filesz, phdr.p_offset);
+        LoadByteSequence(phdr.p_vaddr, buff.data(), phdr.p_filesz);
     }
 
     elf_end(e);
