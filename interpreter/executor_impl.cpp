@@ -492,7 +492,7 @@ void Executor::exec_LB(Instruction inst)
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    int8_t val = GetSignedForm<uint8_t>(vmem_->ReadByte(addr));
+    int8_t val = GetSignedForm<uint8_t>(vmem_->LoadByte(addr));
     Register res = GetSignedExtension<Register, 8>(GetUnsignedForm<int8_t>(val));
     gprf_.write(rd, res);
     NEXT()
@@ -506,7 +506,7 @@ void Executor::exec_LH(Instruction inst)
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    int16_t val = GetSignedForm<uint16_t>(vmem_->ReadTwoBytesFast(addr));
+    int16_t val = GetSignedForm<uint16_t>(vmem_->LoadTwoBytesFast(addr));
     Register res = GetSignedExtension<Register, 16>(GetUnsignedForm<int16_t>(val));
     gprf_.write(rd, res);
     NEXT()
@@ -520,7 +520,7 @@ void Executor::exec_LW(Instruction inst)
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    int32_t val = GetSignedForm<uint32_t>(vmem_->ReadFourBytesFast(addr));
+    int32_t val = GetSignedForm<uint32_t>(vmem_->LoadFourBytesFast(addr));
     Register res = GetSignedExtension<Register, 32>(GetUnsignedForm<int32_t>(val));
     gprf_.write(rd, res);
     NEXT()
@@ -534,7 +534,7 @@ void Executor::exec_LD(Instruction inst)
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    SRegister val = GetSignedForm<Register>(vmem_->ReadEightBytesFast(addr));
+    SRegister val = GetSignedForm<Register>(vmem_->LoadEightBytesFast(addr));
     Register res = GetUnsignedForm<SRegister>(val);
     gprf_.write(rd, res);
     NEXT()
@@ -551,7 +551,7 @@ void Executor::exec_SB(Instruction inst)
     Register addr = rs1_val + signed_imm;
     Register rs2_val = gprf_.read(inst.rs2);
     uint8_t val = static_cast<uint8_t>(rs2_val);
-    vmem_->LoadByte(addr, val);
+    vmem_->StoreByte(addr, val);
     NEXT()
 }
 
@@ -566,7 +566,7 @@ void Executor::exec_SH(Instruction inst)
     Register addr = rs1_val + signed_imm;
     Register rs2_val = gprf_.read(inst.rs2);
     uint16_t val = static_cast<uint16_t>(rs2_val);
-    vmem_->LoadTwoBytesFast(addr, val);
+    vmem_->StoreTwoBytesFast(addr, val);
     NEXT()
 }
 
@@ -581,7 +581,7 @@ void Executor::exec_SW(Instruction inst)
     Register addr = rs1_val + signed_imm;
     Register rs2_val = gprf_.read(inst.rs2);
     uint32_t val = static_cast<uint32_t>(rs2_val);
-    vmem_->LoadFourBytesFast(addr, val);
+    vmem_->StoreFourBytesFast(addr, val);
     NEXT()
 }
 
@@ -596,7 +596,7 @@ void Executor::exec_SD(Instruction inst)
     Register addr = rs1_val + signed_imm;
     Register rs2_val = gprf_.read(inst.rs2);
     Register val = static_cast<Register>(rs2_val);
-    vmem_->LoadEightBytesFast(addr, val);
+    vmem_->StoreEightBytesFast(addr, val);
     NEXT()
 }
 
@@ -608,7 +608,7 @@ void Executor::exec_LBU(Instruction inst)
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    Register res = vmem_->ReadByte(addr);
+    Register res = vmem_->LoadByte(addr);
     gprf_.write(rd, res);
     NEXT()
 }
@@ -621,7 +621,7 @@ void Executor::exec_LHU(Instruction inst)
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    Register res = vmem_->ReadTwoBytesFast(addr);
+    Register res = vmem_->LoadTwoBytesFast(addr);
     gprf_.write(rd, res);
     NEXT()
 }
@@ -634,7 +634,7 @@ void Executor::exec_LWU(Instruction inst)
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    Register res = vmem_->ReadFourBytesFast(addr);
+    Register res = vmem_->LoadFourBytesFast(addr);
     gprf_.write(rd, res);
     NEXT()
 }
