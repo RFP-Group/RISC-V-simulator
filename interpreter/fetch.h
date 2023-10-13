@@ -15,7 +15,7 @@ public:
 
     [[nodiscard]] inline uint32_t RunImpl(Register PC_)
     {
-        return vmem_->ReadFourBytesFast(uintptr_t(PC_));
+        return vmem_->LoadFourBytesFast(uintptr_t(PC_));
     };
 
 private:

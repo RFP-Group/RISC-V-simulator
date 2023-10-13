@@ -52,6 +52,14 @@ Page *PhysMem::GetPage(uint64_t page_id)
     return &pages_[page_id];
 }
 
+/**
+ * Checks that sequence of bytes is located at one Phys Page
+ */
+bool PhysMem::AtOnePage(uint64_t offset, uint64_t length) const
+{
+    return Page::SIZE - offset >= length;
+}
+
 std::pair<uint64_t, uint64_t> PhysMem::NextAfterLastOccupiedByte() const
 {
     // assuming that free pages are in the back of vector

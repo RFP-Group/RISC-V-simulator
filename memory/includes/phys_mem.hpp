@@ -22,6 +22,7 @@ public:
     template <bool AllocPageIfNeeded>
     uint8_t *GetAddr(uint64_t page_id, uint64_t offset);
     Page *GetPage(uint64_t page_id);
+    bool AtOnePage(uint64_t offset, uint64_t length) const;
     std::pair<uint64_t, uint64_t> NextAfterLastOccupiedByte() const;
 
 private:

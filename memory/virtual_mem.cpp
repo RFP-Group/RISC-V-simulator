@@ -28,7 +28,7 @@ bool VirtualMem::Destroy(VirtualMem *virtual_mem)
     return true;
 }
 
-void VirtualMem::LoadByte(uintptr_t addr, uint8_t chr)
+void VirtualMem::StoreByte(uintptr_t addr, uint8_t chr)
 {
     uint8_t *phys_addr;
     // TODO(Mirageinvo): maybe create derived page_fault exception class?
@@ -37,12 +37,14 @@ void VirtualMem::LoadByte(uintptr_t addr, uint8_t chr)
         phys_addr = GetPhysAddress<true>(addr);
     } catch (const std::runtime_error &e) {
         std::cerr << e.what();
+        PhysMem::Destroy(ram_);
+        std::abort();
     }
     assert(phys_addr != nullptr);
     *phys_addr = chr;
 }
 
-uint8_t VirtualMem::ReadByte(uintptr_t addr) const
+uint8_t VirtualMem::LoadByte(uintptr_t addr) const
 {
     uint8_t *phys_addr;
     // TODO(Mirageinvo): maybe create derived page_fault exception class?
@@ -51,16 +53,18 @@ uint8_t VirtualMem::ReadByte(uintptr_t addr) const
         phys_addr = GetPhysAddress<false>(addr);
     } catch (const std::runtime_error &e) {
         std::cerr << e.what();
+        PhysMem::Destroy(ram_);
+        std::abort();
     }
     assert(phys_addr != nullptr);
     return *phys_addr;
 }
 
-bool VirtualMem::LoadByteSequence(uintptr_t addr, uint8_t *chrs, uint64_t length)
+bool VirtualMem::StoreByteSequence(uintptr_t addr, uint8_t *chrs, uint64_t length)
 {
     assert(chrs != nullptr);
     for (uint64_t i = 0; i < length; ++i) {
-        LoadByte(addr + i, *(chrs + i));
+        StoreByte(addr + i, *(chrs + i));
     }
     IncrementOccupiedValue(addr, length);
     return true;
@@ -111,12 +115,11 @@ uintptr_t VirtualMem::GetPointer(uint64_t page_id, uint64_t page_offset) const
     return addr;
 }
 
-// TODO(Mirageinvo): refactor returned value after discussion
-std::vector<uint8_t> VirtualMem::ReadByteSequence(uintptr_t addr, uint64_t length)
+std::vector<uint8_t> VirtualMem::LoadByteSequence(uintptr_t addr, uint64_t length)
 {
     std::vector<uint8_t> arr(length);
     for (uint64_t i = 0; i < length; ++i) {
-        arr[i] = ReadByte(addr + i);
+        arr[i] = LoadByte(addr + i);
     }
     return arr;
 }
@@ -147,60 +150,85 @@ uint64_t VirtualMem::GetPageOffsetByAddress(uintptr_t addr) const
     return addr & Page::OFFSET_MASK;
 }
 
-void VirtualMem::LoadTwoBytesFast(uintptr_t addr, uint16_t value)
+void VirtualMem::StoreTwoBytesFast(uintptr_t addr, uint16_t value)
 {
-    uint8_t upper_value = (value & ((TwoPow<8>() - 1) << 8)) >> 8;
-    uint8_t lower_value = value & (TwoPow<8>() - 1);
-    LoadByte(addr, upper_value);
-    LoadByte(addr + 1, lower_value);
-}
-
-uint16_t VirtualMem::ReadTwoBytesFast(uintptr_t addr) const
-{
-    uint16_t value = 0;
-    value |= ReadByte(addr);
-    value = value << 8;
-    value |= ReadByte(addr + 1);
-    return value;
-}
-
-void VirtualMem::LoadFourBytesFast(uintptr_t addr, uint32_t value)
-{
-    uint16_t upper_value = (value & ((TwoPow<16>() - 1) << 16)) >> 16;
-    uint16_t lower_value = value & (TwoPow<16>() - 1);
-    LoadTwoBytesFast(addr, upper_value);
-    LoadTwoBytesFast(addr + 2, lower_value);
-}
-
-uint32_t VirtualMem::ReadFourBytesFast(uintptr_t addr) const
-{
-    uint32_t value = 0;
-    for (size_t i = 0; i < 3; ++i) {
-        value |= ReadByte(addr + i);
-        value = value << 8;
+    [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 2))
+    {
+        *reinterpret_cast<uint16_t *>(GetPhysAddress<true>(addr)) = value;
     }
-    value |= ReadByte(addr + 3);
+    // taking slower path
+    uint8_t lower_value = value & (TwoPow<8>() - 1);
+    uint8_t upper_value = (value & ((TwoPow<8>() - 1) << 8)) >> 8;
+    StoreByte(addr, lower_value);
+    StoreByte(addr + 1, upper_value);
+}
+
+uint16_t VirtualMem::LoadTwoBytesFast(uintptr_t addr) const
+{
+    [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 2))
+    {
+        return *reinterpret_cast<uint16_t *>(GetPhysAddress<false>(addr));
+    }
+    // taking slower path
+    uint16_t value = 0;
+    value |= LoadByte(addr);
+    value |= (static_cast<uint16_t>(LoadByte(addr + 1)) << 8);
     return value;
 }
 
-void VirtualMem::LoadEightBytesFast(uintptr_t addr, uint64_t value)
+void VirtualMem::StoreFourBytesFast(uintptr_t addr, uint32_t value)
 {
-    uint32_t upper_value = (value & ((TwoPow<32>() - 1) << 32)) >> 32;
+    [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 4))
+    {
+        *reinterpret_cast<uint32_t *>(GetPhysAddress<true>(addr)) = value;
+    }
+    // taking slower path
+    uint16_t lower_value = value & (TwoPow<16>() - 1);
+    uint16_t upper_value = (value & ((TwoPow<16>() - 1) << 16)) >> 16;
+    StoreTwoBytesFast(addr, lower_value);
+    StoreTwoBytesFast(addr + 2, upper_value);
+}
+
+uint32_t VirtualMem::LoadFourBytesFast(uintptr_t addr) const
+{
+    [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 4))
+    {
+        return *reinterpret_cast<uint32_t *>(GetPhysAddress<false>(addr));
+    }
+    // taking slower path
+    uint32_t value = 0;
+    value |= LoadTwoBytesFast(addr);
+    value |= (static_cast<uint32_t>(LoadTwoBytesFast(addr + 2)) << 16);
+    return value;
+}
+
+void VirtualMem::StoreEightBytesFast(uintptr_t addr, uint64_t value)
+{
+    [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 8))
+    {
+        *reinterpret_cast<uint64_t *>(GetPhysAddress<true>(addr)) = value;
+    }
+    // taking slower path
     uint32_t lower_value = value & (TwoPow<32>() - 1);
-    LoadFourBytesFast(addr, upper_value);
-    LoadFourBytesFast(addr + 4, lower_value);
+    uint32_t upper_value = (value & ((TwoPow<32>() - 1) << 32)) >> 32;
+    StoreFourBytesFast(addr, lower_value);
+    StoreFourBytesFast(addr + 4, upper_value);
 }
 
-uint64_t VirtualMem::ReadEightBytesFast(uintptr_t addr) const
+uint64_t VirtualMem::LoadEightBytesFast(uintptr_t addr) const
 {
+    [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 8))
+    {
+        return *reinterpret_cast<uint64_t *>(GetPhysAddress<false>(addr));
+    }
+    // taking slower path
     uint64_t value = 0;
-    value |= ReadFourBytesFast(addr);
-    value = value << 4;
-    value |= ReadFourBytesFast(addr + 4);
+    value |= LoadFourBytesFast(addr);
+    value |= (static_cast<uint64_t>(LoadFourBytesFast(addr + 4)) << 32);
     return value;
 }
 
-uintptr_t VirtualMem::LoadElfFile(const std::string &name)
+uintptr_t VirtualMem::StoreElfFile(const std::string &name)
 {
     int fd;
     if ((fd = open(name.c_str(), O_RDONLY, 0777)) < 0)
@@ -235,7 +263,7 @@ uintptr_t VirtualMem::LoadElfFile(const std::string &name)
             buff.resize(phdr.p_filesz);
         }
         pread(fd, buff.data(), phdr.p_filesz, phdr.p_offset);
-        LoadByteSequence(phdr.p_vaddr, buff.data(), phdr.p_filesz);
+        StoreByteSequence(phdr.p_vaddr, buff.data(), phdr.p_filesz);
     }
 
     elf_end(e);
