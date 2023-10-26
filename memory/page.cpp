@@ -8,7 +8,10 @@ Page::Page()
     unoccupied_mem_ = mem_;
 }
 
-Page::Page(Page &&another) : unoccupied_mem_(another.unoccupied_mem_), mem_(std::move(another.mem_)) {}
+Page::Page(Page &&another) : unoccupied_mem_(another.unoccupied_mem_), mem_(std::move(another.mem_))
+{
+    another.mem_ = 0;
+}
 
 Page::~Page()
 {
