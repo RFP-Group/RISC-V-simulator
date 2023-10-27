@@ -1,5 +1,7 @@
 set(TEST_SOURCES
-    interpreter_tests.cpp
+    main.cpp
+    executor_tests.cpp
+    decoder_tests.cpp
 )
 
 add_executable(interpreter_tests ${TEST_SOURCES})

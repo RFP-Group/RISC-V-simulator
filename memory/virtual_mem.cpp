@@ -101,7 +101,7 @@ void VirtualMem::IncrementOccupiedValue(uintptr_t addr, uint64_t length)
     }
 }
 
-uintptr_t VirtualMem::GetNextContinuousBlock(uint64_t length)
+uintptr_t VirtualMem::GetNextContinuousBlock()
 {
     // TODO(Mirageinvo): introduce less memory-consuming algorithm
     std::pair<uint64_t, uint64_t> ind_and_offset = ram_->NextAfterLastOccupiedByte();
@@ -252,7 +252,7 @@ uintptr_t VirtualMem::StoreElfFile(const std::string &name)
 
     GElf_Phdr phdr;
     std::vector<uint8_t> buff;
-    for (int i = 0; i < n; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         if (gelf_getphdr(e, i, &phdr) != &phdr)
             throw std::runtime_error("gelf_getphdr() failed: " + std::string(elf_errmsg(-1)));
         if (phdr.p_type != PT_LOAD)

@@ -18,10 +18,12 @@ def get_filtered_files(root_dir) :
 
 def run_clang_format(files) :
 	command = f"{PROGRAM} -format-style=file -header-filter=. -p build -fix-errors"
+	exit_code = 0
 	for file in files:
-		os.system(f"{command} {file}")
+		exit_code |= os.system(f"{command} {file}")
+	return exit_code
 
 if __name__ == '__main__' :
 	root_dir = sys.argv[1]
 	files = get_filtered_files(root_dir)
-	run_clang_format(files)
+	sys.exit(run_clang_format(files) >> 8)

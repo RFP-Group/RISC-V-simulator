@@ -5,6 +5,7 @@ enable_language(CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -Werror")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 set(PROJECT_ROOT ${PROJECT_SOURCE_DIR})
@@ -33,6 +34,7 @@ add_custom_target(
 	run-clang-tidy
 	COMMENT Run clang-tidy
 	COMMAND ${Python3_EXECUTABLE} ${PROJECT_SCRIPTS}/run_clang_tidy.py ${PROJECT_ROOT}
+	DEPENDS all
 )
 
 if (NOT INSTALL_RES EQUAL 0)

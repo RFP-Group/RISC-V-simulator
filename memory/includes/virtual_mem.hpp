@@ -9,8 +9,8 @@
 namespace simulator::mem {
 class VirtualMem final {
 public:
-    NO_COPY_SEMANTIC(VirtualMem);
-    NO_MOVE_SEMANTIC(VirtualMem);
+    NO_COPY_SEMANTIC(VirtualMem)
+    NO_MOVE_SEMANTIC(VirtualMem)
 
     [[nodiscard]] static VirtualMem *CreateVirtualMem();
     static bool Destroy(VirtualMem *virtual_mem);
@@ -25,7 +25,7 @@ public:
     void StoreEightBytesFast(uintptr_t addr, uint64_t value);
     uint64_t LoadEightBytesFast(uintptr_t addr) const;
     [[nodiscard]] uintptr_t StoreElfFile(const std::string &name);
-    [[nodiscard]] uintptr_t GetNextContinuousBlock(uint64_t length);
+    [[nodiscard]] uintptr_t GetNextContinuousBlock();
 
 private:
     VirtualMem();

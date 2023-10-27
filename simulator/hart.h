@@ -13,9 +13,9 @@ class Hart final {
 public:
     void RunImpl();
 
-    Hart(mem::VirtualMem *vmem, uintptr_t entry_point) : vmem_(vmem), fetch_(vmem), executor_(vmem, entry_point) {};
-    NO_COPY_SEMANTIC(Hart);
-    NO_MOVE_SEMANTIC(Hart);
+    Hart(mem::VirtualMem *vmem, uintptr_t entry_point) : vmem_(vmem), fetch_(vmem), executor_(vmem_, entry_point) {};
+    NO_COPY_SEMANTIC(Hart)
+    NO_MOVE_SEMANTIC(Hart)
 
 private:
     mem::VirtualMem *vmem_;

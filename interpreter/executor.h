@@ -14,8 +14,8 @@ public:
     {
         gprf_.write(GPR_file::GPR_n::PC, entry_point);
     };
-    NO_COPY_SEMANTIC(Executor);
-    NO_MOVE_SEMANTIC(Executor);
+    NO_COPY_SEMANTIC(Executor)
+    NO_MOVE_SEMANTIC(Executor)
 
     void RunImpl(Instruction inst);
     [[nodiscard]] inline Register getPC()
