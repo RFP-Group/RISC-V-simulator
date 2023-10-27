@@ -25,20 +25,16 @@ bool PhysMem::Destroy(PhysMem *phys_mem)
 template <bool AllocPageIfNeeded>
 uint8_t *PhysMem::GetAddr(uint64_t page_id, uint64_t offset)
 {
-    if constexpr (AllocPageIfNeeded) {
-        if (page_id == pages_.size() && (pages_.size() + 4) * Page::SIZE <= total_size_) {
-            // TODO(Mirageinvo): introduce more advanced algorithm for page allocation
-            pages_.resize(pages_.size() + 4);
-        } else if (page_id == pages_.size() && (pages_.size() + 1) * Page::SIZE <= total_size_) {
-            // In this case we have few memory left
-            pages_.resize(pages_.size() + 1);
-        }
-    }
-#ifndef NDEBUG
-    if (page_id >= pages_.size() || offset > Page::SIZE) {
+    uint64_t max_num_of_pages = total_size_ / Page::SIZE;
+    if (page_id >= max_num_of_pages || offset > Page::SIZE) {
         throw std::runtime_error("Page fault");
     }
-#endif
+    if constexpr (AllocPageIfNeeded) {
+        while (page_id >= pages_.size()) {
+            size_t new_size = std::min(max_num_of_pages, pages_.size() * 2);
+            pages_.resize(new_size);
+        }
+    }
     return ToNativePtr<uint8_t>(pages_[page_id].GetAddrByOffset(offset));
 }
 
