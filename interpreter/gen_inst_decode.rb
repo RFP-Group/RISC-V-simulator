@@ -27,7 +27,7 @@ class ISA
 	end
 
 	def generate_switch_case(nodes, string, prev_tab_level)
-		string += "switch(ApplyMask<uint32_t, #{form_hex_mask(nodes['range'])}>(raw_inst)) {\n"
+		string += "switch(ApplyMaskAndShift<#{form_hex_mask(nodes['range'])}, #{nodes['range']['lsb']}, 0>(raw_inst)) {\n"
 		nodes['nodes'].each do |node|
 			string += "#{generate_tabs(prev_tab_level)}\tcase #{node[0]}: "
 			if node[1]['range'].nil?

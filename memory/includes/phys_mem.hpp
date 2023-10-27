@@ -12,9 +12,9 @@ constexpr const uint32_t initial_page_number = 4;
 
 class PhysMem final {
 public:
-    NO_DEFAULT_CTOR(PhysMem);
-    NO_COPY_SEMANTIC(PhysMem);
-    NO_MOVE_SEMANTIC(PhysMem);
+    NO_DEFAULT_CTOR(PhysMem)
+    NO_COPY_SEMANTIC(PhysMem)
+    NO_MOVE_SEMANTIC(PhysMem)
 
     [[nodiscard]] static PhysMem *CreatePhysMem(uint64_t total_size);
     static bool Destroy(PhysMem *phys_mem);

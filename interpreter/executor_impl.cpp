@@ -9,7 +9,7 @@ namespace simulator::interpreter {
         gprf_.write(GPR_file::GPR_n::PC, gprf_.read(GPR_file::GPR_n::PC) + 4); \
     }
 
-void Executor::exec_LUI(Instruction inst)
+void Executor::exec_LUI([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
@@ -18,18 +18,18 @@ void Executor::exec_LUI(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_AUIPC(Instruction inst)
+void Executor::exec_AUIPC([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
-    uint32_t shifted_imm = ApplyLeftShift<Immediate_t, 12>(imm);
     Register advanced_pc = gprf_.read(GPR_file::GPR_n::PC);
+    uint32_t shifted_imm = ApplyLeftShift<Immediate_t, 12>(imm);
     advanced_pc += shifted_imm;
     gprf_.write(rd, advanced_pc);
     NEXT()
 }
 
-void Executor::exec_JAL(Instruction inst)
+void Executor::exec_JAL([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register rd = inst.rd;
@@ -41,7 +41,7 @@ void Executor::exec_JAL(Instruction inst)
     gprf_.write(GPR_file::GPR_n::PC, pc);
 }
 
-void Executor::exec_JALR(Instruction inst)
+void Executor::exec_JALR([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
@@ -54,7 +54,7 @@ void Executor::exec_JALR(Instruction inst)
     gprf_.write(rd, pc);
 }
 
-void Executor::exec_BEQ(Instruction inst)
+void Executor::exec_BEQ([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rs1 = inst.rs1;
@@ -70,7 +70,7 @@ void Executor::exec_BEQ(Instruction inst)
     }
 }
 
-void Executor::exec_BNE(Instruction inst)
+void Executor::exec_BNE([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rs1 = inst.rs1;
@@ -86,7 +86,7 @@ void Executor::exec_BNE(Instruction inst)
     }
 }
 
-void Executor::exec_BLT(Instruction inst)
+void Executor::exec_BLT([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rs1 = inst.rs1;
@@ -102,7 +102,7 @@ void Executor::exec_BLT(Instruction inst)
     }
 }
 
-void Executor::exec_BLTU(Instruction inst)
+void Executor::exec_BLTU([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rs1 = inst.rs1;
@@ -118,7 +118,7 @@ void Executor::exec_BLTU(Instruction inst)
     }
 }
 
-void Executor::exec_BGE(Instruction inst)
+void Executor::exec_BGE([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rs1 = inst.rs1;
@@ -134,7 +134,7 @@ void Executor::exec_BGE(Instruction inst)
     }
 }
 
-void Executor::exec_BGEU(Instruction inst)
+void Executor::exec_BGEU([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rs1 = inst.rs1;
@@ -150,7 +150,7 @@ void Executor::exec_BGEU(Instruction inst)
     }
 }
 
-void Executor::exec_ADDI(Instruction inst)
+void Executor::exec_ADDI([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
@@ -161,7 +161,7 @@ void Executor::exec_ADDI(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_SLTI(Instruction inst)
+void Executor::exec_SLTI([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
@@ -173,7 +173,7 @@ void Executor::exec_SLTI(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_SLTIU(Instruction inst)
+void Executor::exec_SLTIU([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
@@ -185,7 +185,7 @@ void Executor::exec_SLTIU(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_XORI(Instruction inst)
+void Executor::exec_XORI([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
@@ -197,7 +197,7 @@ void Executor::exec_XORI(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_ANDI(Instruction inst)
+void Executor::exec_ANDI([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
@@ -209,7 +209,7 @@ void Executor::exec_ANDI(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_ORI(Instruction inst)
+void Executor::exec_ORI([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
@@ -221,40 +221,40 @@ void Executor::exec_ORI(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_SLLI(Instruction inst)
+void Executor::exec_SLLI([[maybe_unused]] Instruction inst)
 {
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
     Immediate_t shamt = inst.GetShamt();
     Register rs1_val = gprf_.read(rs1);
-    Register res = rs1 << shamt;
+    Register res = rs1_val << shamt;
     gprf_.write(rd, res);
     NEXT()
 }
 
-void Executor::exec_SRLI(Instruction inst)
+void Executor::exec_SRLI([[maybe_unused]] Instruction inst)
 {
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
     Immediate_t shamt = inst.GetShamt();
     Register rs1_val = gprf_.read(rs1);
-    Register res = rs1 >> shamt;
+    Register res = rs1_val >> shamt;
     gprf_.write(rd, res);
     NEXT()
 }
 
-void Executor::exec_SRAI(Instruction inst)
+void Executor::exec_SRAI([[maybe_unused]] Instruction inst)
 {
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
     Immediate_t shamt = inst.GetShamt();
     SRegister rs1_val = GetSignedForm<Register>(gprf_.read(rs1));
-    SRegister res = rs1 >> shamt;
+    SRegister res = rs1_val >> shamt;
     gprf_.write(rd, GetUnsignedForm<SRegister>(res));
     NEXT()
 }
 
-void Executor::exec_ADD(Instruction inst)
+void Executor::exec_ADD([[maybe_unused]] Instruction inst)
 {
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
@@ -266,7 +266,7 @@ void Executor::exec_ADD(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_SUB(Instruction inst)
+void Executor::exec_SUB([[maybe_unused]] Instruction inst)
 {
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
@@ -278,7 +278,7 @@ void Executor::exec_SUB(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_SLL(Instruction inst)
+void Executor::exec_SLL([[maybe_unused]] Instruction inst)
 {
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
@@ -290,7 +290,7 @@ void Executor::exec_SLL(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_SRL(Instruction inst)
+void Executor::exec_SRL([[maybe_unused]] Instruction inst)
 {
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
@@ -302,7 +302,7 @@ void Executor::exec_SRL(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_SRA(Instruction inst)
+void Executor::exec_SRA([[maybe_unused]] Instruction inst)
 {
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
@@ -314,9 +314,8 @@ void Executor::exec_SRA(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_SLT(Instruction inst)
+void Executor::exec_SLT([[maybe_unused]] Instruction inst)
 {
-    Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
     Register_t rs2 = inst.rs2;
@@ -327,9 +326,8 @@ void Executor::exec_SLT(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_SLTU(Instruction inst)
+void Executor::exec_SLTU([[maybe_unused]] Instruction inst)
 {
-    Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
     Register_t rs2 = inst.rs2;
@@ -340,9 +338,8 @@ void Executor::exec_SLTU(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_XOR(Instruction inst)
+void Executor::exec_XOR([[maybe_unused]] Instruction inst)
 {
-    Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
     Register_t rs2 = inst.rs2;
@@ -353,9 +350,8 @@ void Executor::exec_XOR(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_AND(Instruction inst)
+void Executor::exec_AND([[maybe_unused]] Instruction inst)
 {
-    Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
     Register_t rs2 = inst.rs2;
@@ -366,9 +362,8 @@ void Executor::exec_AND(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_OR(Instruction inst)
+void Executor::exec_OR([[maybe_unused]] Instruction inst)
 {
-    Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
     Register_t rs2 = inst.rs2;
@@ -379,7 +374,7 @@ void Executor::exec_OR(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_ADDIW(Instruction inst)
+void Executor::exec_ADDIW([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
@@ -391,7 +386,7 @@ void Executor::exec_ADDIW(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_SLLIW(Instruction inst)
+void Executor::exec_SLLIW([[maybe_unused]] Instruction inst)
 {
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
@@ -402,7 +397,7 @@ void Executor::exec_SLLIW(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_SRLIW(Instruction inst)
+void Executor::exec_SRLIW([[maybe_unused]] Instruction inst)
 {
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
@@ -413,7 +408,7 @@ void Executor::exec_SRLIW(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_SRAIW(Instruction inst)
+void Executor::exec_SRAIW([[maybe_unused]] Instruction inst)
 {
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
@@ -424,7 +419,7 @@ void Executor::exec_SRAIW(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_ADDW(Instruction inst)
+void Executor::exec_ADDW([[maybe_unused]] Instruction inst)
 {
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
@@ -436,7 +431,7 @@ void Executor::exec_ADDW(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_SUBW(Instruction inst)
+void Executor::exec_SUBW([[maybe_unused]] Instruction inst)
 {
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
@@ -448,7 +443,7 @@ void Executor::exec_SUBW(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_SLLW(Instruction inst)
+void Executor::exec_SLLW([[maybe_unused]] Instruction inst)
 {
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
@@ -460,7 +455,7 @@ void Executor::exec_SLLW(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_SRLW(Instruction inst)
+void Executor::exec_SRLW([[maybe_unused]] Instruction inst)
 {
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
@@ -472,7 +467,7 @@ void Executor::exec_SRLW(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_SRAW(Instruction inst)
+void Executor::exec_SRAW([[maybe_unused]] Instruction inst)
 {
     Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
@@ -484,7 +479,7 @@ void Executor::exec_SRAW(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_LB(Instruction inst)
+void Executor::exec_LB([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
@@ -498,7 +493,7 @@ void Executor::exec_LB(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_LH(Instruction inst)
+void Executor::exec_LH([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
@@ -512,7 +507,7 @@ void Executor::exec_LH(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_LW(Instruction inst)
+void Executor::exec_LW([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
@@ -526,7 +521,7 @@ void Executor::exec_LW(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_LD(Instruction inst)
+void Executor::exec_LD([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
@@ -540,67 +535,63 @@ void Executor::exec_LD(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_SB(Instruction inst)
+void Executor::exec_SB([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
-    Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
     Register_t rs2 = inst.rs2;
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    Register rs2_val = gprf_.read(inst.rs2);
+    Register rs2_val = gprf_.read(rs2);
     uint8_t val = static_cast<uint8_t>(rs2_val);
     vmem_->StoreByte(addr, val);
     NEXT()
 }
 
-void Executor::exec_SH(Instruction inst)
+void Executor::exec_SH([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
-    Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
     Register_t rs2 = inst.rs2;
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    Register rs2_val = gprf_.read(inst.rs2);
+    Register rs2_val = gprf_.read(rs2);
     uint16_t val = static_cast<uint16_t>(rs2_val);
     vmem_->StoreTwoBytesFast(addr, val);
     NEXT()
 }
 
-void Executor::exec_SW(Instruction inst)
+void Executor::exec_SW([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
-    Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
     Register_t rs2 = inst.rs2;
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    Register rs2_val = gprf_.read(inst.rs2);
+    Register rs2_val = gprf_.read(rs2);
     uint32_t val = static_cast<uint32_t>(rs2_val);
     vmem_->StoreFourBytesFast(addr, val);
     NEXT()
 }
 
-void Executor::exec_SD(Instruction inst)
+void Executor::exec_SD([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
-    Register_t rd = inst.rd;
     Register_t rs1 = inst.rs1;
     Register_t rs2 = inst.rs2;
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    Register rs2_val = gprf_.read(inst.rs2);
+    Register rs2_val = gprf_.read(rs2);
     Register val = static_cast<Register>(rs2_val);
     vmem_->StoreEightBytesFast(addr, val);
     NEXT()
 }
 
-void Executor::exec_LBU(Instruction inst)
+void Executor::exec_LBU([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
@@ -613,7 +604,7 @@ void Executor::exec_LBU(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_LHU(Instruction inst)
+void Executor::exec_LHU([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
@@ -626,7 +617,7 @@ void Executor::exec_LHU(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_LWU(Instruction inst)
+void Executor::exec_LWU([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
@@ -639,187 +630,187 @@ void Executor::exec_LWU(Instruction inst)
     NEXT()
 }
 
-void Executor::exec_FENCE(Instruction inst)
+void Executor::exec_FENCE([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FENCE_I(Instruction inst)
+void Executor::exec_FENCE_I([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_MUL(Instruction inst)
+void Executor::exec_MUL([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_MULH(Instruction inst)
+void Executor::exec_MULH([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_MULHSU(Instruction inst)
+void Executor::exec_MULHSU([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_MULHU(Instruction inst)
+void Executor::exec_MULHU([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_DIV(Instruction inst)
+void Executor::exec_DIV([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_DIVU(Instruction inst)
+void Executor::exec_DIVU([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_REM(Instruction inst)
+void Executor::exec_REM([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_REMU(Instruction inst)
+void Executor::exec_REMU([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_MULW(Instruction inst)
+void Executor::exec_MULW([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_DIVW(Instruction inst)
+void Executor::exec_DIVW([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_DIVUW(Instruction inst)
+void Executor::exec_DIVUW([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_REMW(Instruction inst)
+void Executor::exec_REMW([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_REMUW(Instruction inst)
+void Executor::exec_REMUW([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOADD_W(Instruction inst)
+void Executor::exec_AMOADD_W([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOXOR_W(Instruction inst)
+void Executor::exec_AMOXOR_W([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOOR_W(Instruction inst)
+void Executor::exec_AMOOR_W([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOAND_W(Instruction inst)
+void Executor::exec_AMOAND_W([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOMIN_W(Instruction inst)
+void Executor::exec_AMOMIN_W([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOMAX_W(Instruction inst)
+void Executor::exec_AMOMAX_W([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOMINU_W(Instruction inst)
+void Executor::exec_AMOMINU_W([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOMAXU_W(Instruction inst)
+void Executor::exec_AMOMAXU_W([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOSWAP_W(Instruction inst)
+void Executor::exec_AMOSWAP_W([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_LR_W(Instruction inst)
+void Executor::exec_LR_W([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_SC_W(Instruction inst)
+void Executor::exec_SC_W([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOADD_D(Instruction inst)
+void Executor::exec_AMOADD_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOXOR_D(Instruction inst)
+void Executor::exec_AMOXOR_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOOR_D(Instruction inst)
+void Executor::exec_AMOOR_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOAND_D(Instruction inst)
+void Executor::exec_AMOAND_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOMIN_D(Instruction inst)
+void Executor::exec_AMOMIN_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOMAX_D(Instruction inst)
+void Executor::exec_AMOMAX_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOMINU_D(Instruction inst)
+void Executor::exec_AMOMINU_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOMAXU_D(Instruction inst)
+void Executor::exec_AMOMAXU_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_AMOSWAP_D(Instruction inst)
+void Executor::exec_AMOSWAP_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_LR_D(Instruction inst)
+void Executor::exec_LR_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_SC_D(Instruction inst)
+void Executor::exec_SC_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_ECALL(Instruction inst)
+void Executor::exec_ECALL([[maybe_unused]] Instruction inst)
 {
     return;
 }
-void Executor::exec_EBREAK(Instruction inst)
+void Executor::exec_EBREAK([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_URET(Instruction inst)
+void Executor::exec_URET([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_SRET(Instruction inst)
+void Executor::exec_SRET([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_MRET(Instruction inst)
+void Executor::exec_MRET([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_DRET(Instruction inst)
+void Executor::exec_DRET([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_SFENCE_VMA(Instruction inst)
+void Executor::exec_SFENCE_VMA([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_WFI(Instruction inst)
+void Executor::exec_WFI([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_CSRRW(Instruction inst)
+void Executor::exec_CSRRW([[maybe_unused]] Instruction inst)
 {
     uint16_t csr_addr = inst.imm;
     Register_t rd = inst.rd;
@@ -828,7 +819,7 @@ void Executor::exec_CSRRW(Instruction inst)
     csrf_.write(csr_addr, gprf_.read(rs1));
     gprf_.write(rd, csr_val);
 }
-void Executor::exec_CSRRS(Instruction inst)
+void Executor::exec_CSRRS([[maybe_unused]] Instruction inst)
 {
     uint16_t csr_addr = inst.imm;
     Register_t rd = inst.rd;
@@ -837,7 +828,7 @@ void Executor::exec_CSRRS(Instruction inst)
     csrf_.write(csr_addr, csr_val | gprf_.read(rs1));
     gprf_.write(rd, csr_val);
 }
-void Executor::exec_CSRRC(Instruction inst)
+void Executor::exec_CSRRC([[maybe_unused]] Instruction inst)
 {
     uint16_t csr_addr = inst.imm;
     Register_t rd = inst.rd;
@@ -846,7 +837,7 @@ void Executor::exec_CSRRC(Instruction inst)
     csrf_.write(csr_addr, csr_val & (~gprf_.read(rs1)));
     gprf_.write(rd, csr_val);
 }
-void Executor::exec_CSRRWI(Instruction inst)
+void Executor::exec_CSRRWI([[maybe_unused]] Instruction inst)
 {
     uint16_t csr_addr = inst.imm;
     Register_t rd = inst.rd;
@@ -855,7 +846,7 @@ void Executor::exec_CSRRWI(Instruction inst)
     csrf_.write(csr_addr, zimm);
     gprf_.write(rd, csr_val);
 }
-void Executor::exec_CSRRSI(Instruction inst)
+void Executor::exec_CSRRSI([[maybe_unused]] Instruction inst)
 {
     uint16_t csr_addr = inst.imm;
     Register_t rd = inst.rd;
@@ -864,7 +855,7 @@ void Executor::exec_CSRRSI(Instruction inst)
     csrf_.write(csr_addr, csr_val | zimm);
     gprf_.write(rd, csr_val);
 }
-void Executor::exec_CSRRCI(Instruction inst)
+void Executor::exec_CSRRCI([[maybe_unused]] Instruction inst)
 {
     uint16_t csr_addr = inst.imm;
     Register_t rd = inst.rd;
@@ -873,395 +864,395 @@ void Executor::exec_CSRRCI(Instruction inst)
     csrf_.write(csr_addr, csr_val & (~zimm));
     gprf_.write(rd, csr_val);
 }
-void Executor::exec_HFENCE_VVMA(Instruction inst)
+void Executor::exec_HFENCE_VVMA([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_HFENCE_GVMA(Instruction inst)
+void Executor::exec_HFENCE_GVMA([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FADD_S(Instruction inst)
+void Executor::exec_FADD_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSUB_S(Instruction inst)
+void Executor::exec_FSUB_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMUL_S(Instruction inst)
+void Executor::exec_FMUL_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FDIV_S(Instruction inst)
+void Executor::exec_FDIV_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSGNJ_S(Instruction inst)
+void Executor::exec_FSGNJ_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSGNJN_S(Instruction inst)
+void Executor::exec_FSGNJN_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSGNJX_S(Instruction inst)
+void Executor::exec_FSGNJX_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMIN_S(Instruction inst)
+void Executor::exec_FMIN_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMAX_S(Instruction inst)
+void Executor::exec_FMAX_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSQRT_S(Instruction inst)
+void Executor::exec_FSQRT_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FADD_D(Instruction inst)
+void Executor::exec_FADD_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSUB_D(Instruction inst)
+void Executor::exec_FSUB_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMUL_D(Instruction inst)
+void Executor::exec_FMUL_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FDIV_D(Instruction inst)
+void Executor::exec_FDIV_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSGNJ_D(Instruction inst)
+void Executor::exec_FSGNJ_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSGNJN_D(Instruction inst)
+void Executor::exec_FSGNJN_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSGNJX_D(Instruction inst)
+void Executor::exec_FSGNJX_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMIN_D(Instruction inst)
+void Executor::exec_FMIN_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMAX_D(Instruction inst)
+void Executor::exec_FMAX_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_S_D(Instruction inst)
+void Executor::exec_FCVT_S_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_D_S(Instruction inst)
+void Executor::exec_FCVT_D_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSQRT_D(Instruction inst)
+void Executor::exec_FSQRT_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FADD_Q(Instruction inst)
+void Executor::exec_FADD_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSUB_Q(Instruction inst)
+void Executor::exec_FSUB_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMUL_Q(Instruction inst)
+void Executor::exec_FMUL_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FDIV_Q(Instruction inst)
+void Executor::exec_FDIV_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSGNJ_Q(Instruction inst)
+void Executor::exec_FSGNJ_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSGNJN_Q(Instruction inst)
+void Executor::exec_FSGNJN_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSGNJX_Q(Instruction inst)
+void Executor::exec_FSGNJX_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMIN_Q(Instruction inst)
+void Executor::exec_FMIN_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMAX_Q(Instruction inst)
+void Executor::exec_FMAX_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_S_Q(Instruction inst)
+void Executor::exec_FCVT_S_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_Q_S(Instruction inst)
+void Executor::exec_FCVT_Q_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_D_Q(Instruction inst)
+void Executor::exec_FCVT_D_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_Q_D(Instruction inst)
+void Executor::exec_FCVT_Q_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSQRT_Q(Instruction inst)
+void Executor::exec_FSQRT_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FLE_S(Instruction inst)
+void Executor::exec_FLE_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FLT_S(Instruction inst)
+void Executor::exec_FLT_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FEQ_S(Instruction inst)
+void Executor::exec_FEQ_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FLE_D(Instruction inst)
+void Executor::exec_FLE_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FLT_D(Instruction inst)
+void Executor::exec_FLT_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FEQ_D(Instruction inst)
+void Executor::exec_FEQ_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FLE_Q(Instruction inst)
+void Executor::exec_FLE_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FLT_Q(Instruction inst)
+void Executor::exec_FLT_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FEQ_Q(Instruction inst)
+void Executor::exec_FEQ_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_W_S(Instruction inst)
+void Executor::exec_FCVT_W_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_WU_S(Instruction inst)
+void Executor::exec_FCVT_WU_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_L_S(Instruction inst)
+void Executor::exec_FCVT_L_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_LU_S(Instruction inst)
+void Executor::exec_FCVT_LU_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMV_X_W(Instruction inst)
+void Executor::exec_FMV_X_W([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCLASS_S(Instruction inst)
+void Executor::exec_FCLASS_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_W_D(Instruction inst)
+void Executor::exec_FCVT_W_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_WU_D(Instruction inst)
+void Executor::exec_FCVT_WU_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_L_D(Instruction inst)
+void Executor::exec_FCVT_L_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_LU_D(Instruction inst)
+void Executor::exec_FCVT_LU_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMV_X_D(Instruction inst)
+void Executor::exec_FMV_X_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCLASS_D(Instruction inst)
+void Executor::exec_FCLASS_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_W_Q(Instruction inst)
+void Executor::exec_FCVT_W_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_WU_Q(Instruction inst)
+void Executor::exec_FCVT_WU_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_L_Q(Instruction inst)
+void Executor::exec_FCVT_L_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_LU_Q(Instruction inst)
+void Executor::exec_FCVT_LU_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMV_X_Q(Instruction inst)
+void Executor::exec_FMV_X_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCLASS_Q(Instruction inst)
+void Executor::exec_FCLASS_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_S_W(Instruction inst)
+void Executor::exec_FCVT_S_W([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_S_WU(Instruction inst)
+void Executor::exec_FCVT_S_WU([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_S_L(Instruction inst)
+void Executor::exec_FCVT_S_L([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_S_LU(Instruction inst)
+void Executor::exec_FCVT_S_LU([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMV_W_X(Instruction inst)
+void Executor::exec_FMV_W_X([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_D_W(Instruction inst)
+void Executor::exec_FCVT_D_W([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_D_WU(Instruction inst)
+void Executor::exec_FCVT_D_WU([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_D_L(Instruction inst)
+void Executor::exec_FCVT_D_L([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_D_LU(Instruction inst)
+void Executor::exec_FCVT_D_LU([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMV_D_X(Instruction inst)
+void Executor::exec_FMV_D_X([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_Q_W(Instruction inst)
+void Executor::exec_FCVT_Q_W([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_Q_WU(Instruction inst)
+void Executor::exec_FCVT_Q_WU([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_Q_L(Instruction inst)
+void Executor::exec_FCVT_Q_L([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FCVT_Q_LU(Instruction inst)
+void Executor::exec_FCVT_Q_LU([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMV_Q_X(Instruction inst)
+void Executor::exec_FMV_Q_X([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FLW(Instruction inst)
+void Executor::exec_FLW([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FLD(Instruction inst)
+void Executor::exec_FLD([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FLQ(Instruction inst)
+void Executor::exec_FLQ([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSW(Instruction inst)
+void Executor::exec_FSW([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSD(Instruction inst)
+void Executor::exec_FSD([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FSQ(Instruction inst)
+void Executor::exec_FSQ([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMADD_S(Instruction inst)
+void Executor::exec_FMADD_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMSUB_S(Instruction inst)
+void Executor::exec_FMSUB_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FNMSUB_S(Instruction inst)
+void Executor::exec_FNMSUB_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FNMADD_S(Instruction inst)
+void Executor::exec_FNMADD_S([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMADD_D(Instruction inst)
+void Executor::exec_FMADD_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMSUB_D(Instruction inst)
+void Executor::exec_FMSUB_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FNMSUB_D(Instruction inst)
+void Executor::exec_FNMSUB_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FNMADD_D(Instruction inst)
+void Executor::exec_FNMADD_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMADD_Q(Instruction inst)
+void Executor::exec_FMADD_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FMSUB_Q(Instruction inst)
+void Executor::exec_FMSUB_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FNMSUB_Q(Instruction inst)
+void Executor::exec_FNMSUB_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }
-void Executor::exec_FNMADD_Q(Instruction inst)
+void Executor::exec_FNMADD_Q([[maybe_unused]] Instruction inst)
 {
     std::abort();
 }

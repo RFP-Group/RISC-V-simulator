@@ -10,7 +10,7 @@ void Hart::RunImpl()
         uint32_t raw_instr = fetch_.RunImpl(executor_.getPC());
         auto instr = decoder_.RunImpl(raw_instr);
         executor_.RunImpl(instr);
-    } while (last_PC == executor_.getPC());
+    } while (last_PC != executor_.getPC());
 }
 
 }  // namespace simulator::core

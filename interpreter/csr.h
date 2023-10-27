@@ -123,7 +123,7 @@ public:
                 csrs_[MIP] = (csrs_[MIE] & !csrs_[MIDELEG]) | (value & csrs_[MIDELEG]);
                 break;
             case SSTATUS:
-                csrs_[MSTATUS] = (csrs_[MSTATUS] & !MASK_SSTATUS) | (value & MASK_SSTATUS);
+                csrs_[MSTATUS] = (csrs_[MSTATUS] & ~MASK_SSTATUS) | (value & MASK_SSTATUS);
                 break;
             default:
                 csrs_[addr] = value;

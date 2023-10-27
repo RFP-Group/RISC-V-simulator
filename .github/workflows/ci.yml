@@ -88,5 +88,5 @@ jobs:
                 name: cmake_cache
             - run: |
                   sudo apt-get update
-                  sudo apt-get install -y ninja-build clang-tidy
+                  sudo apt-get install -y ninja-build clang-tidy g++-12 libstdc++-12-dev libelf-dev
             - run: /bin/bash .ci/tidy_check.sh

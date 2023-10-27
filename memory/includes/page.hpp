@@ -16,7 +16,7 @@ public:
     Page();
     Page(Page &&);
     ~Page();
-    NO_COPY_SEMANTIC(Page);
+    NO_COPY_SEMANTIC(Page)
 
     bool IsEmpty() const;
     uint64_t GetFreeMemorySize() const;

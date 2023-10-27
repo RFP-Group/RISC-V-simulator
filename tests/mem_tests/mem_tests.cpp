@@ -15,7 +15,7 @@ TEST(VirtualMemTest, VirtualMemSmallStoreLoadSequenceTest)
 {
     mem::VirtualMem *virtual_mem = mem::VirtualMem::CreateVirtualMem();
     std::vector<uint8_t> arr(100, 3);
-    uintptr_t addr_to_load = virtual_mem->GetNextContinuousBlock(arr.size());
+    uintptr_t addr_to_load = virtual_mem->GetNextContinuousBlock();
     virtual_mem->StoreByteSequence(addr_to_load, arr.data(), arr.size());
     std::vector<uint8_t> stored_arr = virtual_mem->LoadByteSequence(addr_to_load, arr.size());
     ASSERT_EQ(arr, stored_arr);
@@ -26,7 +26,7 @@ TEST(VirtualMemTest, VirtualMemSmallStoreLoadFastTest)
 {
     mem::VirtualMem *virtual_mem = mem::VirtualMem::CreateVirtualMem();
     std::vector<uint8_t> arr = {255, 255, 5, 5};
-    uintptr_t addr_to_load = virtual_mem->GetNextContinuousBlock(arr.size());
+    uintptr_t addr_to_load = virtual_mem->GetNextContinuousBlock();
     virtual_mem->StoreByteSequence(addr_to_load, arr.data(), arr.size());
     uint16_t two_bytes = virtual_mem->LoadTwoBytesFast(addr_to_load);
     ASSERT_EQ(two_bytes, 65535);  // 11111111 11111111
@@ -42,7 +42,7 @@ TEST(VirtualMemTest, VirtualMemSmallStoreLoadFastTest)
 TEST(VirtualMemTest, VirtualMemFastStoreLoadFastTest)
 {
     mem::VirtualMem *virtual_mem = mem::VirtualMem::CreateVirtualMem();
-    uintptr_t addr_to_load = virtual_mem->GetNextContinuousBlock(8);
+    uintptr_t addr_to_load = virtual_mem->GetNextContinuousBlock();
     virtual_mem->StoreEightBytesFast(addr_to_load, 1);
     // 00000001 00000000 00000000 00000000 00000000 00000000 00000000 00000000
     ASSERT_EQ(virtual_mem->LoadTwoBytesFast(addr_to_load), 1);
