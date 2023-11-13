@@ -821,27 +821,57 @@ void Executor::exec_WFI(Instruction inst)
 }
 void Executor::exec_CSRRW(Instruction inst)
 {
-    std::abort();
+    uint16_t csr_addr = inst.imm;
+    Register_t rd = inst.rd;
+    Register_t rs1 = inst.rs1;
+    Register csr_val = csrf_.read(csr_addr);
+    csrf_.write(csr_addr, gprf_.read(rs1));
+    gprf_.write(rd, csr_val);
 }
 void Executor::exec_CSRRS(Instruction inst)
 {
-    std::abort();
+    uint16_t csr_addr = inst.imm;
+    Register_t rd = inst.rd;
+    Register_t rs1 = inst.rs1;
+    Register csr_val = csrf_.read(csr_addr);
+    csrf_.write(csr_addr, csr_val | gprf_.read(rs1));
+    gprf_.write(rd, csr_val);
 }
 void Executor::exec_CSRRC(Instruction inst)
 {
-    std::abort();
+    uint16_t csr_addr = inst.imm;
+    Register_t rd = inst.rd;
+    Register_t rs1 = inst.rs1;
+    Register csr_val = csrf_.read(csr_addr);
+    csrf_.write(csr_addr, csr_val & (~gprf_.read(rs1)));
+    gprf_.write(rd, csr_val);
 }
 void Executor::exec_CSRRWI(Instruction inst)
 {
-    std::abort();
+    uint16_t csr_addr = inst.imm;
+    Register_t rd = inst.rd;
+    uint64_t zimm = inst.rs1;
+    Register csr_val = csrf_.read(csr_addr);
+    csrf_.write(csr_addr, zimm);
+    gprf_.write(rd, csr_val);
 }
 void Executor::exec_CSRRSI(Instruction inst)
 {
-    std::abort();
+    uint16_t csr_addr = inst.imm;
+    Register_t rd = inst.rd;
+    uint64_t zimm = inst.rs1;
+    Register csr_val = csrf_.read(csr_addr);
+    csrf_.write(csr_addr, csr_val | zimm);
+    gprf_.write(rd, csr_val);
 }
 void Executor::exec_CSRRCI(Instruction inst)
 {
-    std::abort();
+    uint16_t csr_addr = inst.imm;
+    Register_t rd = inst.rd;
+    uint64_t zimm = inst.rs1;
+    Register csr_val = csrf_.read(csr_addr);
+    csrf_.write(csr_addr, csr_val & (~zimm));
+    gprf_.write(rd, csr_val);
 }
 void Executor::exec_HFENCE_VVMA(Instruction inst)
 {

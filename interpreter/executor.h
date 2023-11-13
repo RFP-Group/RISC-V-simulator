@@ -3,6 +3,7 @@
 
 #include "interpreter/instruction.h"
 #include "interpreter/gpr.h"
+#include "interpreter/csr.h"
 #include "memory/includes/virtual_mem.hpp"
 
 namespace simulator::interpreter {
@@ -25,6 +26,7 @@ public:
 private:
 #include "generated/executor_gen.h"
     GPR_file gprf_;
+    CSR_file csrf_;
     mem::VirtualMem *vmem_;
 };
 
