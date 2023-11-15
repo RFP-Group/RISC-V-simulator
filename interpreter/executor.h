@@ -8,7 +8,7 @@
 
 namespace simulator::interpreter {
 
-class Executor final {
+class Executor {
 public:
     Executor(mem::VirtualMem *vmem, uintptr_t entry_point) : vmem_(vmem)
     {
@@ -22,6 +22,16 @@ public:
     {
         return gprf_.read(GPR_file::GPR_n::PC);
     };
+
+    const GPR_file &getGPRfile()
+    {
+        return gprf_;
+    }
+
+    const CSR_file &getCSRfile()
+    {
+        return csrf_;
+    }
 
 private:
 #include "generated/executor_gen.h"

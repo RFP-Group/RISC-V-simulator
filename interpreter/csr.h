@@ -50,8 +50,6 @@ private:
         MASK_MEIP = 1ULL << 11
     };
 
-    // std::array<Register, CSR_COUNT> csrs_ {};
-
     std::unordered_map<uint16_t, uint64_t> csrs_ = {
         {MHARTID, 0},    {MSTATUS, 0},  {MEDELEG, 0}, {MIDELEG, 0},  {MIE, 0},   {MTVEC, 0},
         {MCOUNTEREN, 0}, {MSCRATCH, 0}, {MEPC, 0},    {MCAUSE, 0},   {MTVAL, 0}, {MIP, 0},
