@@ -1,0 +1,4 @@
+add_custom_target(run_all_tests)
+
+add_subdirectory(mem_tests)
+add_subdirectory(interpreter_tests)

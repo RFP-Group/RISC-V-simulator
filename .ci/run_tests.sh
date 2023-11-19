@@ -9,5 +9,5 @@ echo "CXX: $CXX"
 echo "CXXFLAGS: $CXXFLAGS"
 echo "--------------------------"
 
-echo "---- run mem_gtests ----"
-cmake --build ${BUILD_DIR} --target mem_gtests
+echo "---- run all tests ----"
+cmake --build ${BUILD_DIR} --target run_all_tests

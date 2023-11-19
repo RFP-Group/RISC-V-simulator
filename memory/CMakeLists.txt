@@ -11,5 +11,3 @@ target_include_directories(mem PUBLIC ${PROJECT_ROOT}/memory/includes ${PROJECT_
 
 target_include_directories(mem PUBLIC ${LIBELF_INCLUDE_DIRS})
 target_link_libraries(mem PUBLIC ${LIBELF_LIBRARIES})
-
-add_subdirectory("tests")
