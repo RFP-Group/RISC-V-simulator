@@ -1,10 +1,11 @@
 #include <iostream>
+#include "bitops.h"
 #include "virtual_mem.hpp"
 
 namespace simulator::mem {
 VirtualMem::VirtualMem()
 {
-    ram_ = PhysMem::CreatePhysMem(16_GB);
+    ram_ = PhysMem::CreatePhysMem(1_GB);
     assert(ram_ != nullptr);
 }
 
@@ -34,7 +35,7 @@ void VirtualMem::StoreByte(uintptr_t addr, uint8_t chr)
     // TODO(Mirageinvo): maybe create derived page_fault exception class?
     // handling possible page fault exception
     try {
-        phys_addr = GetPhysAddress<true>(addr);
+        phys_addr = GetPhysAddrWithAllocation(addr);
     } catch (const std::runtime_error &e) {
         std::cerr << e.what();
         PhysMem::Destroy(ram_);
@@ -44,13 +45,13 @@ void VirtualMem::StoreByte(uintptr_t addr, uint8_t chr)
     *phys_addr = chr;
 }
 
-uint8_t VirtualMem::LoadByte(uintptr_t addr) const
+uint8_t VirtualMem::LoadByte(uintptr_t addr)
 {
     uint8_t *phys_addr;
     // TODO(Mirageinvo): maybe create derived page_fault exception class?
     // handling possible page fault exception
     try {
-        phys_addr = GetPhysAddress<false>(addr);
+        phys_addr = GetPhysAddrWithAllocation(addr);
     } catch (const std::runtime_error &e) {
         std::cerr << e.what();
         PhysMem::Destroy(ram_);
@@ -66,53 +67,7 @@ bool VirtualMem::StoreByteSequence(uintptr_t addr, uint8_t *chrs, uint64_t lengt
     for (uint64_t i = 0; i < length; ++i) {
         StoreByte(addr + i, *(chrs + i));
     }
-    IncrementOccupiedValue(addr, length);
     return true;
-}
-
-void VirtualMem::IncrementOccupiedValue(uintptr_t addr, uint64_t length)
-{
-    while (length != 0) {
-        Page *page = GetPageByAddress(addr);
-        [[maybe_unused]] uintptr_t page_start = addr & Page::ID_MASK;
-        assert(page_start <= addr);
-        uintptr_t unoccupied_mem = page->GetFreeMemoryPtr();
-        if (addr < unoccupied_mem) {
-            length -= std::min(length, unoccupied_mem - addr);
-            addr = unoccupied_mem;
-        } else if (addr > unoccupied_mem) {
-            // TODO(mirageinvo): maybe it is better to fail here?
-            page->SetFreeMemoryPtr(addr);
-            continue;
-        }
-        uint64_t free_mem_size = page->GetFreeMemorySize();
-        if (length > free_mem_size) {
-            // registering that this page is full
-            page->SetFreeMemoryPtr(unoccupied_mem + free_mem_size);
-            assert(page->GetFreeMemorySize() == 0);
-            assert(page->GetOccupiedMemorySize() == Page::SIZE);
-            length -= free_mem_size;
-            addr += free_mem_size;
-        } else {
-            page->SetFreeMemoryPtr(unoccupied_mem + length);
-            length -= length;
-            addr += length;
-        }
-    }
-}
-
-uintptr_t VirtualMem::GetNextContinuousBlock()
-{
-    // TODO(Mirageinvo): introduce less memory-consuming algorithm
-    std::pair<uint64_t, uint64_t> ind_and_offset = ram_->NextAfterLastOccupiedByte();
-    return GetPointer(ind_and_offset.first, ind_and_offset.second);
-}
-
-uintptr_t VirtualMem::GetPointer(uint64_t page_id, uint64_t page_offset) const
-{
-    uintptr_t addr = 0;
-    addr += (page_id << Page::OFFSET_BIT_LENGTH) + page_offset;
-    return addr;
 }
 
 std::vector<uint8_t> VirtualMem::LoadByteSequence(uintptr_t addr, uint64_t length)
@@ -124,20 +79,45 @@ std::vector<uint8_t> VirtualMem::LoadByteSequence(uintptr_t addr, uint64_t lengt
     return arr;
 }
 
-template <bool AllocPageIfNeeded>
-uint8_t *VirtualMem::GetPhysAddress(uintptr_t addr) const
+uint64_t VirtualMem::PageLookUp(uint32_t vpn0, uint32_t vpn1, uint32_t vpn2, uint32_t vpn3)
 {
-    uint64_t page_id = GetPageIdByAddress(addr);
-    uint64_t offset = GetPageOffsetByAddress(addr);
-    uint8_t *phys_addr = ram_->GetAddr<AllocPageIfNeeded>(page_id, offset);
-    assert(phys_addr != nullptr);
-    return phys_addr;
+    auto paddr3 = &page_translation_[vpn3];
+    auto paddr2 = &(*paddr3)[vpn2];
+    auto paddr1 = &(*paddr2)[vpn1];
+    auto paddr0 = &(*paddr1)[vpn0];
+    if (*paddr0 == 0) {
+        uint64_t pageNum = ram_->GetEmptyPageNumber();
+        ram_->InitPage(pageNum);
+        *paddr0 = pageNum;
+    }
+    return (*paddr0 - 1) * Page::SIZE;
 }
 
-Page *VirtualMem::GetPageByAddress(uintptr_t addr)
+uint8_t *VirtualMem::GetPhysAddrWithAllocation(uintptr_t vaddr)
 {
-    uint64_t page_id = GetPageIdByAddress(addr);
-    return ram_->GetPage(page_id);
+    // TRANSLATION MODE IS SV48
+    if (!IsVirtAddrCanonical(vaddr)) {
+        throw std::runtime_error("Noncanonical address");
+    }
+
+    uint32_t vpn3 = GetPartialBitsShifted<39, 47>(vaddr);
+    uint32_t vpn2 = GetPartialBitsShifted<30, 38>(vaddr);
+    uint32_t vpn1 = GetPartialBitsShifted<21, 29>(vaddr);
+    uint32_t vpn0 = GetPartialBitsShifted<12, 20>(vaddr);
+    uintptr_t paddr = PageLookUp(vpn0, vpn1, vpn2, vpn3);
+
+    paddr += vaddr & Page::OFFSET_MASK;
+    return ToNativePtr<uint8_t>(ToUintPtr<uint8_t>(ram_->GetMemPointer()) + paddr);
+}
+
+bool VirtualMem::IsVirtAddrCanonical(uintptr_t vaddr) const
+{
+    static constexpr const uint64_t ADDRESS_UPPER_BITS_MASK_SV48 = 0xFFFF800000000000;
+    uint64_t val = vaddr & ADDRESS_UPPER_BITS_MASK_SV48;
+    if (val == 0 || val == ADDRESS_UPPER_BITS_MASK_SV48) {
+        return true;
+    }
+    return false;
 }
 
 uint64_t VirtualMem::GetPageIdByAddress(uintptr_t addr) const
@@ -154,7 +134,7 @@ void VirtualMem::StoreTwoBytesFast(uintptr_t addr, uint16_t value)
 {
     [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 2))
     {
-        *reinterpret_cast<uint16_t *>(GetPhysAddress<true>(addr)) = value;
+        *reinterpret_cast<uint16_t *>(GetPhysAddrWithAllocation(addr)) = value;
     }
     // taking slower path
     uint8_t lower_value = value & (TwoPow<8>() - 1);
@@ -163,11 +143,11 @@ void VirtualMem::StoreTwoBytesFast(uintptr_t addr, uint16_t value)
     StoreByte(addr + 1, upper_value);
 }
 
-uint16_t VirtualMem::LoadTwoBytesFast(uintptr_t addr) const
+uint16_t VirtualMem::LoadTwoBytesFast(uintptr_t addr)
 {
     [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 2))
     {
-        return *reinterpret_cast<uint16_t *>(GetPhysAddress<false>(addr));
+        return *reinterpret_cast<uint16_t *>(GetPhysAddrWithAllocation(addr));
     }
     // taking slower path
     uint16_t value = 0;
@@ -180,7 +160,7 @@ void VirtualMem::StoreFourBytesFast(uintptr_t addr, uint32_t value)
 {
     [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 4))
     {
-        *reinterpret_cast<uint32_t *>(GetPhysAddress<true>(addr)) = value;
+        *reinterpret_cast<uint32_t *>(GetPhysAddrWithAllocation(addr)) = value;
     }
     // taking slower path
     uint16_t lower_value = value & (TwoPow<16>() - 1);
@@ -189,11 +169,11 @@ void VirtualMem::StoreFourBytesFast(uintptr_t addr, uint32_t value)
     StoreTwoBytesFast(addr + 2, upper_value);
 }
 
-uint32_t VirtualMem::LoadFourBytesFast(uintptr_t addr) const
+uint32_t VirtualMem::LoadFourBytesFast(uintptr_t addr)
 {
     [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 4))
     {
-        return *reinterpret_cast<uint32_t *>(GetPhysAddress<false>(addr));
+        return *reinterpret_cast<uint32_t *>(GetPhysAddrWithAllocation(addr));
     }
     // taking slower path
     uint32_t value = 0;
@@ -206,7 +186,7 @@ void VirtualMem::StoreEightBytesFast(uintptr_t addr, uint64_t value)
 {
     [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 8))
     {
-        *reinterpret_cast<uint64_t *>(GetPhysAddress<true>(addr)) = value;
+        *reinterpret_cast<uint64_t *>(GetPhysAddrWithAllocation(addr)) = value;
     }
     // taking slower path
     uint32_t lower_value = value & (TwoPow<32>() - 1);
@@ -215,11 +195,11 @@ void VirtualMem::StoreEightBytesFast(uintptr_t addr, uint64_t value)
     StoreFourBytesFast(addr + 4, upper_value);
 }
 
-uint64_t VirtualMem::LoadEightBytesFast(uintptr_t addr) const
+uint64_t VirtualMem::LoadEightBytesFast(uintptr_t addr)
 {
     [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 8))
     {
-        return *reinterpret_cast<uint64_t *>(GetPhysAddress<false>(addr));
+        return *reinterpret_cast<uint64_t *>(GetPhysAddrWithAllocation(addr));
     }
     // taking slower path
     uint64_t value = 0;

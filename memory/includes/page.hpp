@@ -8,10 +8,11 @@
 namespace simulator::mem {
 class Page final {
 public:
-    constexpr static const uint64_t SIZE = 4_KB;  // must be a power of 2
-    constexpr static const uint64_t OFFSET_MASK = SIZE - 1;
-    constexpr static const uint64_t OFFSET_BIT_LENGTH = GetPowerOfTwo<SIZE>();
-    constexpr static const uint64_t ID_MASK = ~OFFSET_MASK;
+    static constexpr uint64_t SIZE = 4_KB;  // must be a power of 2
+    static constexpr uint64_t OFFSET_MASK = SIZE - 1;
+    static constexpr uint64_t OFFSET_BIT_LENGTH = GetPowerOfTwo<SIZE>();
+    static constexpr uint64_t ID_MASK = ~OFFSET_MASK;
+    static constexpr uint64_t ADDRESS_PAGE_NUM_SHIFT = 12;
 
     Page();
     Page(Page &&);
