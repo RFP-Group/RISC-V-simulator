@@ -18,20 +18,20 @@ inline Type GetSignedExtension(Type val)
 }
 
 template <typename Type, Type Mask>
-inline Type ApplyMask(Type raw)
+inline constexpr Type ApplyMask(Type raw)
 {
     return (raw & Mask);
 }
 
 template <typename Type, uint8_t Shift>
-inline Type ApplyLeftShift(Type raw_inst)
+inline constexpr Type ApplyLeftShift(Type raw_inst)
 {
     static_assert(Shift < sizeof(Type) * CHAR_BIT);
     return raw_inst << Shift;
 }
 
 template <typename Type, uint8_t Shift>
-inline Type ApplyRightShift(Type raw_inst)
+inline constexpr Type ApplyRightShift(Type raw_inst)
 {
     static_assert(Shift < sizeof(Type) * CHAR_BIT);
     return raw_inst >> Shift;
@@ -53,6 +53,22 @@ inline uint32_t ApplyMaskAndShift(uint32_t raw_inst)
     return raw_inst;
 }
 
+template <uint8_t low, uint8_t high, typename T = uint32_t>
+inline constexpr T GetPartialBitsShifted(const T val)
+{
+    static_assert(low <= high);
+    constexpr T mask = ((static_cast<T>(1) << (high - low + 1)) - 1) << low;
+    return ApplyRightShift<T, low>(val & mask);
+}
+
+template <uint8_t low, uint8_t high, typename T = uint32_t>
+inline constexpr T MakePartialBits(const T val)
+{
+    static_assert(low <= high);
+    constexpr const T mask = ((static_cast<T>(1) << (high - low + 1)) - 1);
+    return ((val & mask) << low);
+}
+
 template <typename Type>
 inline std::make_signed_t<Type> GetSignedForm(Type val)
 {
@@ -65,6 +81,6 @@ inline std::make_unsigned_t<Type> GetUnsignedForm(Type val)
     return std::make_unsigned_t<Type>(val);
 }
 
-};  // namespace simulator
+}  // namespace simulator
 
 #endif  // COMMON_BITOPS_H
