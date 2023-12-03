@@ -19,8 +19,8 @@ protected:
 
 TEST_F(ExecutorTest, LUITest)
 {
-    // lui x3, 0x5a
-    Instruction lui = {0, 0, 0, GPR_file::X3, 0, 0x5a, 55, InstructionId::LUI};
+    // lui x3, 0x5a000
+    Instruction lui = {0, 0, 0, GPR_file::X3, 0, 0x5a000, 55, InstructionId::LUI};
 
     exec_.RunImpl(lui);
 

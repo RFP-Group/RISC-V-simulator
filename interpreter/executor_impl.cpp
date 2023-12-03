@@ -2,6 +2,8 @@
 #include "interpreter/gpr.h"
 #include "interpreter/instruction.h"
 
+#include <iostream>
+
 namespace simulator::interpreter {
 
 #define NEXT()                                                                 \
@@ -13,8 +15,7 @@ void Executor::exec_LUI([[maybe_unused]] Instruction inst)
 {
     Immediate_t imm = inst.imm;
     Register_t rd = inst.rd;
-    uint32_t shifted_imm = ApplyLeftShift<Immediate_t, 12>(imm);
-    gprf_.write(rd, shifted_imm);
+    gprf_.write(rd, imm);
     NEXT()
 }
 
@@ -126,7 +127,7 @@ void Executor::exec_BGE([[maybe_unused]] Instruction inst)
     Register pc = gprf_.read(GPR_file::GPR_n::PC);
     SRegister rs1_val = GetSignedForm<Register>(gprf_.read(rs1));
     SRegister rs2_val = GetSignedForm<Register>(gprf_.read(rs2));
-    if (rs1_val > rs2_val) {
+    if (rs1_val >= rs2_val) {
         Register offset = pc + GetSignedExtension<Register, 12>(imm);
         gprf_.write(GPR_file::GPR_n::PC, offset);
     } else {
@@ -142,7 +143,7 @@ void Executor::exec_BGEU([[maybe_unused]] Instruction inst)
     Register pc = gprf_.read(GPR_file::GPR_n::PC);
     Register rs1_val = gprf_.read(rs1);
     Register rs2_val = gprf_.read(rs2);
-    if (rs1_val > rs2_val) {
+    if (rs1_val >= rs2_val) {
         Register offset = pc + GetSignedExtension<Register, 12>(imm);
         gprf_.write(GPR_file::GPR_n::PC, offset);
     } else {
@@ -630,6 +631,27 @@ void Executor::exec_LWU([[maybe_unused]] Instruction inst)
     NEXT()
 }
 
+void Executor::exec_ECALL([[maybe_unused]] Instruction inst)
+{
+    Register syscall = gprf_.read(GPR_file::GPR_n::X17);
+    switch (syscall) {
+        case 64: {
+            Register addr = gprf_.read(GPR_file::GPR_n::X11);
+            Register length = gprf_.read(GPR_file::GPR_n::X12);
+
+            std::vector<uint8_t> out_vector = vmem_->LoadByteSequence(addr, length);
+            std::string out_str(out_vector.begin(), out_vector.end());
+            std::cout << out_str;
+            break;
+        }
+        default: {
+            std::abort();
+            break;
+        }
+    }
+    NEXT()
+}
+
 void Executor::exec_FENCE([[maybe_unused]] Instruction inst)
 {
     std::abort();
@@ -777,10 +799,6 @@ void Executor::exec_LR_D([[maybe_unused]] Instruction inst)
 void Executor::exec_SC_D([[maybe_unused]] Instruction inst)
 {
     std::abort();
-}
-void Executor::exec_ECALL([[maybe_unused]] Instruction inst)
-{
-    return;
 }
 void Executor::exec_EBREAK([[maybe_unused]] Instruction inst)
 {

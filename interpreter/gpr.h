@@ -50,7 +50,7 @@ public:
         X32 = 32,
         PC = 33
     };
-    Register read(uint8_t reg_n)
+    Register read(uint8_t reg_n) const
     {
         return gpr_[reg_n];
     }
