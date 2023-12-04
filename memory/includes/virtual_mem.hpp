@@ -11,6 +11,7 @@ namespace simulator::mem {
 
 class VirtualMem final {
 public:
+    static constexpr size_t PTE_SIZE = 8;
     NO_COPY_SEMANTIC(VirtualMem)
     NO_MOVE_SEMANTIC(VirtualMem)
 
@@ -36,13 +37,9 @@ private:
     uint64_t PageLookUp(uint32_t vpn0, uint32_t vpn1, uint32_t vpn2, uint32_t vpn3);
     uint8_t *GetPhysAddrWithAllocation(uintptr_t vaddr);
     bool IsVirtAddrCanonical(uintptr_t vaddr) const;
-    void IncrementOccupiedValue(uintptr_t addr, uint64_t length);
     uintptr_t GetPointer(uint64_t page_id, uint64_t page_offset) const;
     void validateElfHeader(const GElf_Ehdr &ehdr) const;
 
-    std::unordered_map<int64_t,
-                       std::unordered_map<int64_t, std::unordered_map<int64_t, std::unordered_map<int64_t, int64_t>>>>
-        page_translation_;
     PhysMem *ram_ = nullptr;
 };
 }  // namespace simulator::mem

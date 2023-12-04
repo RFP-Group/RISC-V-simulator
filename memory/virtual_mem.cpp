@@ -81,16 +81,48 @@ std::vector<uint8_t> VirtualMem::LoadByteSequence(uintptr_t addr, uint64_t lengt
 
 uint64_t VirtualMem::PageLookUp(uint32_t vpn0, uint32_t vpn1, uint32_t vpn2, uint32_t vpn3)
 {
-    auto paddr3 = &page_translation_[vpn3];
-    auto paddr2 = &(*paddr3)[vpn2];
-    auto paddr1 = &(*paddr2)[vpn1];
-    auto paddr0 = &(*paddr1)[vpn0];
-    if (*paddr0 == 0) {
+    auto mem_ptr = ram_->GetMemPointer();
+    uintptr_t paddr0;
+    uintptr_t paddr1;
+    uintptr_t paddr2;
+    uintptr_t paddr3;
+    // Assume that transation table root is on the first page
+    paddr3 = PTE_SIZE * vpn3;
+    uint64_t *paddr3_ptr = reinterpret_cast<uint64_t *>(mem_ptr + paddr3);
+    if (*paddr3_ptr == 0) {
         uint64_t pageNum = ram_->GetEmptyPageNumber();
         ram_->InitPage(pageNum);
-        *paddr0 = pageNum;
+        *paddr3_ptr = pageNum;
     }
-    return (*paddr0 - 1) * Page::SIZE;
+
+    paddr2 = ((*paddr3_ptr) - 1) * Page::SIZE;
+    paddr2 += PTE_SIZE * vpn2;
+    uint64_t *paddr2_ptr = reinterpret_cast<uint64_t *>(mem_ptr + paddr2);
+    if (*paddr2_ptr == 0) {
+        uint64_t pageNum = ram_->GetEmptyPageNumber();
+        ram_->InitPage(pageNum);
+        *paddr2_ptr = pageNum;
+    }
+
+    paddr1 = ((*paddr2_ptr) - 1) * Page::SIZE;
+    paddr1 += PTE_SIZE * vpn1;
+    uint64_t *paddr1_ptr = reinterpret_cast<uint64_t *>(mem_ptr + paddr1);
+    if (*paddr1_ptr == 0) {
+        uint64_t pageNum = ram_->GetEmptyPageNumber();
+        ram_->InitPage(pageNum);
+        *paddr1_ptr = pageNum;
+    }
+
+    paddr0 = ((*paddr1_ptr - 1) * Page::SIZE);
+    paddr0 += PTE_SIZE * vpn0;
+    uint64_t *paddr0_ptr = reinterpret_cast<uint64_t *>(mem_ptr + paddr0);
+    if (*paddr0_ptr == 0) {
+        uint64_t pageNum = ram_->GetEmptyPageNumber();
+        ram_->InitPage(pageNum);
+        *paddr0_ptr = pageNum;
+    }
+
+    return ((*paddr0_ptr) - 1) * Page::SIZE;
 }
 
 uint8_t *VirtualMem::GetPhysAddrWithAllocation(uintptr_t vaddr)
@@ -132,80 +164,38 @@ uint64_t VirtualMem::GetPageOffsetByAddress(uintptr_t addr) const
 
 void VirtualMem::StoreTwoBytesFast(uintptr_t addr, uint16_t value)
 {
-    [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 2))
-    {
-        *reinterpret_cast<uint16_t *>(GetPhysAddrWithAllocation(addr)) = value;
-    }
-    // taking slower path
-    uint8_t lower_value = value & (TwoPow<8>() - 1);
-    uint8_t upper_value = (value & ((TwoPow<8>() - 1) << 8)) >> 8;
-    StoreByte(addr, lower_value);
-    StoreByte(addr + 1, upper_value);
+    assert(ram_->AtOnePage(GetPageOffsetByAddress(addr), 2));
+    *reinterpret_cast<uint16_t *>(GetPhysAddrWithAllocation(addr)) = value;
 }
 
 uint16_t VirtualMem::LoadTwoBytesFast(uintptr_t addr)
 {
-    [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 2))
-    {
-        return *reinterpret_cast<uint16_t *>(GetPhysAddrWithAllocation(addr));
-    }
-    // taking slower path
-    uint16_t value = 0;
-    value |= LoadByte(addr);
-    value |= (static_cast<uint16_t>(LoadByte(addr + 1)) << 8);
-    return value;
+    assert(ram_->AtOnePage(GetPageOffsetByAddress(addr), 2));
+    return *reinterpret_cast<uint16_t *>(GetPhysAddrWithAllocation(addr));
 }
 
 void VirtualMem::StoreFourBytesFast(uintptr_t addr, uint32_t value)
 {
-    [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 4))
-    {
-        *reinterpret_cast<uint32_t *>(GetPhysAddrWithAllocation(addr)) = value;
-    }
-    // taking slower path
-    uint16_t lower_value = value & (TwoPow<16>() - 1);
-    uint16_t upper_value = (value & ((TwoPow<16>() - 1) << 16)) >> 16;
-    StoreTwoBytesFast(addr, lower_value);
-    StoreTwoBytesFast(addr + 2, upper_value);
+    assert(ram_->AtOnePage(GetPageOffsetByAddress(addr), 4));
+    *reinterpret_cast<uint32_t *>(GetPhysAddrWithAllocation(addr)) = value;
 }
 
 uint32_t VirtualMem::LoadFourBytesFast(uintptr_t addr)
 {
-    [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 4))
-    {
-        return *reinterpret_cast<uint32_t *>(GetPhysAddrWithAllocation(addr));
-    }
-    // taking slower path
-    uint32_t value = 0;
-    value |= LoadTwoBytesFast(addr);
-    value |= (static_cast<uint32_t>(LoadTwoBytesFast(addr + 2)) << 16);
-    return value;
+    assert(ram_->AtOnePage(GetPageOffsetByAddress(addr), 4));
+    return *reinterpret_cast<uint32_t *>(GetPhysAddrWithAllocation(addr));
 }
 
 void VirtualMem::StoreEightBytesFast(uintptr_t addr, uint64_t value)
 {
-    [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 8))
-    {
-        *reinterpret_cast<uint64_t *>(GetPhysAddrWithAllocation(addr)) = value;
-    }
-    // taking slower path
-    uint32_t lower_value = value & (TwoPow<32>() - 1);
-    uint32_t upper_value = (value & ((TwoPow<32>() - 1) << 32)) >> 32;
-    StoreFourBytesFast(addr, lower_value);
-    StoreFourBytesFast(addr + 4, upper_value);
+    assert(ram_->AtOnePage(GetPageOffsetByAddress(addr), 8));
+    *reinterpret_cast<uint64_t *>(GetPhysAddrWithAllocation(addr)) = value;
 }
 
 uint64_t VirtualMem::LoadEightBytesFast(uintptr_t addr)
 {
-    [[likely]] if (ram_->AtOnePage(GetPageOffsetByAddress(addr), 8))
-    {
-        return *reinterpret_cast<uint64_t *>(GetPhysAddrWithAllocation(addr));
-    }
-    // taking slower path
-    uint64_t value = 0;
-    value |= LoadFourBytesFast(addr);
-    value |= (static_cast<uint64_t>(LoadFourBytesFast(addr + 4)) << 32);
-    return value;
+    assert(ram_->AtOnePage(GetPageOffsetByAddress(addr), 8));
+    return *reinterpret_cast<uint64_t *>(GetPhysAddrWithAllocation(addr));
 }
 
 uintptr_t VirtualMem::StoreElfFile(const std::string &name)
@@ -242,7 +232,9 @@ uintptr_t VirtualMem::StoreElfFile(const std::string &name)
         if (buff.capacity() < phdr.p_filesz) {
             buff.resize(phdr.p_filesz);
         }
-        pread(fd, buff.data(), phdr.p_filesz, phdr.p_offset);
+        if (pread(fd, buff.data(), phdr.p_filesz, phdr.p_offset) == -1) {
+            std::abort();
+        }
         StoreByteSequence(phdr.p_vaddr, buff.data(), phdr.p_filesz);
     }
 

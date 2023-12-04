@@ -61,6 +61,12 @@ TEST(VirtualMemTest, VirtualMemRandomAllocationTest)
     mem::VirtualMem *virtual_mem = mem::VirtualMem::CreateVirtualMem();
     for (size_t i = 0; i < TwoPow<8>(); ++i) {
         uintptr_t addr_to_load = static_cast<uintptr_t>(std::rand());
+        for (size_t j = 0; j < 8; ++j) {
+            if ((addr_to_load + j) % 8 == 0) {
+                addr_to_load = addr_to_load + j;  // Aligning to place objects on one page
+                break;
+            }
+        }
         virtual_mem->StoreByteSequence(addr_to_load, arr.data(), arr.size());
         uint16_t two_bytes = virtual_mem->LoadTwoBytesFast(addr_to_load);
         ASSERT_EQ(two_bytes, 65535);  // 11111111 11111111

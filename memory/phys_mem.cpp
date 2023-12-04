@@ -5,13 +5,14 @@
 namespace simulator::mem {
 PhysMem::PhysMem(uint64_t total_size) : total_size_(total_size)
 {
-    memory_ = new uint8_t[total_size];
+    memory_ = (uint8_t *)calloc(total_size, sizeof(uint8_t));
     allocated_pages_.resize(total_size / Page::SIZE, false);
+    allocated_pages_[0] = true;  // for translation table
 }
 
 PhysMem::~PhysMem()
 {
-    delete[] memory_;
+    free(memory_);
 }
 
 /* static */
