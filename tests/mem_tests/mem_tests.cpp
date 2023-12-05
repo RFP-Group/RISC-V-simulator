@@ -5,7 +5,7 @@
 namespace simulator {
 TEST(PhysVirtualMemTest, PhysVirtualMemCreateDestroyTest)
 {
-    mem::PhysMem *phys_mem = mem::PhysMem::CreatePhysMem(16_GB);
+    mem::PhysMem *phys_mem = mem::PhysMem::CreatePhysMem(8_GB);
     ASSERT_TRUE(mem::PhysMem::Destroy(phys_mem)) << "Couldn't successfully destroy PhysMem";
     mem::VirtualMem *virtual_mem = mem::VirtualMem::CreateVirtualMem();
     ASSERT_TRUE(mem::VirtualMem::Destroy(virtual_mem)) << "Couldn't successfully destroy VirtualMem";

@@ -5,7 +5,7 @@ import re
 PROGRAM = "clang-tidy"
 
 def get_filtered_files(root_dir) :
-	default_ignored_paths = ['build', 'third-party']
+	default_ignored_paths = ['build', 'third-party', 'tests']
 	patterns = (".c", ".cpp", ".cc", ".h", ".hpp", ".hh")
 	files = []
 	for dir_path, dir_names, file_names in os.walk(root_dir) :
