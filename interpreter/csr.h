@@ -86,7 +86,7 @@ public:
         SATP = 0x180
     };
 
-    [[nodiscard]] inline Register read(uint16_t addr)
+    [[nodiscard]] Register read(uint16_t addr)
     {
         if (csrs_.find(addr) == csrs_.end()) {
             std::stringstream sstream;

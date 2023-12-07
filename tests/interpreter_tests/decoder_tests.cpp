@@ -13,7 +13,7 @@ TEST_F(DecoderTest, BEQTest)
 {
     uint32_t raw_inst = 0x5e220863;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x4);
     ASSERT_EQ(instr.rs2, 0x2);
@@ -25,7 +25,7 @@ TEST_F(DecoderTest, BNETest)
 {
     uint32_t raw_inst = 0xc0349263;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x9);
     ASSERT_EQ(instr.rs2, 0x3);
@@ -37,7 +37,7 @@ TEST_F(DecoderTest, BLTTest)
 {
     uint32_t raw_inst = 0x1234cc63;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x9);
     ASSERT_EQ(instr.rs2, 0x3);
@@ -49,7 +49,7 @@ TEST_F(DecoderTest, BGETest)
 {
     uint32_t raw_inst = 0xc186db63;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0xd);
     ASSERT_EQ(instr.rs2, 0x18);
@@ -61,7 +61,7 @@ TEST_F(DecoderTest, BLTUTest)
 {
     uint32_t raw_inst = 0x41bf6963;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x1e);
     ASSERT_EQ(instr.rs2, 0x1b);
@@ -73,7 +73,7 @@ TEST_F(DecoderTest, BGEUTest)
 {
     uint32_t raw_inst = 0x1db67463;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0xc);
     ASSERT_EQ(instr.rs2, 0x1b);
@@ -85,7 +85,7 @@ TEST_F(DecoderTest, JALRTest)
 {
     uint32_t raw_inst = 0x042389e7;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rd, 0x13);
     ASSERT_EQ(instr.rs1, 0x7);
@@ -97,7 +97,7 @@ TEST_F(DecoderTest, JALTest)
 {
     uint32_t raw_inst = 0x78800fef;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rd, 0x1f);
     ASSERT_EQ(instr.imm, 1928);
@@ -108,7 +108,7 @@ TEST_F(DecoderTest, LUITest)
 {
     uint32_t raw_inst = 0x0101dbb7;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rd, 0x17);
     ASSERT_EQ(instr.imm, 16896000);
@@ -119,7 +119,7 @@ TEST_F(DecoderTest, AUIPCTest)
 {
     uint32_t raw_inst = 0x011af697;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rd, 0xd);
     ASSERT_EQ(instr.imm, 18542592);
@@ -130,7 +130,7 @@ TEST_F(DecoderTest, ADDITest)
 {
     uint32_t raw_inst = 0x1af68293;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0xd);
     ASSERT_EQ(instr.rd, 0x5);
@@ -142,7 +142,7 @@ TEST_F(DecoderTest, SLLITest)
 {
     uint32_t raw_inst = 0x00c49393;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x9);
     ASSERT_EQ(instr.rd, 0x7);
@@ -154,7 +154,7 @@ TEST_F(DecoderTest, SLTITest)
 {
     uint32_t raw_inst = 0x00c4a393;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x9);
     ASSERT_EQ(instr.rd, 0x7);
@@ -166,7 +166,7 @@ TEST_F(DecoderTest, SLIUTest)
 {
     uint32_t raw_inst = 0x00c4b393;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x9);
     ASSERT_EQ(instr.rd, 0x7);
@@ -178,7 +178,7 @@ TEST_F(DecoderTest, SRLITest)
 {
     uint32_t raw_inst = 0x02dada13;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x15);
     ASSERT_EQ(instr.rd, 0x14);
@@ -190,7 +190,7 @@ TEST_F(DecoderTest, SRAITest)
 {
     uint32_t raw_inst = 0x42dada13;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x15);
     ASSERT_EQ(instr.rd, 0x14);
@@ -202,7 +202,7 @@ TEST_F(DecoderTest, XORITest)
 {
     uint32_t raw_inst = 0x1a574213;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0xe);
     ASSERT_EQ(instr.rd, 0x4);
@@ -214,7 +214,7 @@ TEST_F(DecoderTest, ORITest)
 {
     uint32_t raw_inst = 0x1a576213;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0xe);
     ASSERT_EQ(instr.rd, 0x4);
@@ -226,7 +226,7 @@ TEST_F(DecoderTest, ANDITest)
 {
     uint32_t raw_inst = 0x1a577213;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0xe);
     ASSERT_EQ(instr.rd, 0x4);
@@ -238,7 +238,7 @@ TEST_F(DecoderTest, ADDTest)
 {
     uint32_t raw_inst = 0x00870233;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0xe);
     ASSERT_EQ(instr.rs2, 0x8);
@@ -250,7 +250,7 @@ TEST_F(DecoderTest, SUBTest)
 {
     uint32_t raw_inst = 0x40870233;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0xe);
     ASSERT_EQ(instr.rs2, 0x8);
@@ -262,7 +262,7 @@ TEST_F(DecoderTest, SLLTest)
 {
     uint32_t raw_inst = 0x00871233;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0xe);
     ASSERT_EQ(instr.rs2, 0x8);
@@ -274,7 +274,7 @@ TEST_F(DecoderTest, SLTTest)
 {
     uint32_t raw_inst = 0x00872233;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0xe);
     ASSERT_EQ(instr.rs2, 0x8);
@@ -286,7 +286,7 @@ TEST_F(DecoderTest, SLTUTest)
 {
     uint32_t raw_inst = 0x00873233;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0xe);
     ASSERT_EQ(instr.rs2, 0x8);
@@ -298,7 +298,7 @@ TEST_F(DecoderTest, XORTest)
 {
     uint32_t raw_inst = 0x00874233;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0xe);
     ASSERT_EQ(instr.rs2, 0x8);
@@ -310,7 +310,7 @@ TEST_F(DecoderTest, SRLTest)
 {
     uint32_t raw_inst = 0x00875233;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0xe);
     ASSERT_EQ(instr.rs2, 0x8);
@@ -322,7 +322,7 @@ TEST_F(DecoderTest, SRATest)
 {
     uint32_t raw_inst = 0x40875233;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0xe);
     ASSERT_EQ(instr.rs2, 0x8);
@@ -334,7 +334,7 @@ TEST_F(DecoderTest, ORTest)
 {
     uint32_t raw_inst = 0x00876233;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0xe);
     ASSERT_EQ(instr.rs2, 0x8);
@@ -346,7 +346,7 @@ TEST_F(DecoderTest, ANDTest)
 {
     uint32_t raw_inst = 0x00877233;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0xe);
     ASSERT_EQ(instr.rs2, 0x8);
@@ -358,7 +358,7 @@ TEST_F(DecoderTest, LBTest)
 {
     uint32_t raw_inst = 0x23638303;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x7);
     ASSERT_EQ(instr.rd, 0x6);
@@ -370,7 +370,7 @@ TEST_F(DecoderTest, LHTest)
 {
     uint32_t raw_inst = 0x23639303;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x7);
     ASSERT_EQ(instr.rd, 0x6);
@@ -382,7 +382,7 @@ TEST_F(DecoderTest, LWTest)
 {
     uint32_t raw_inst = 0x2363a303;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x7);
     ASSERT_EQ(instr.rd, 0x6);
@@ -394,7 +394,7 @@ TEST_F(DecoderTest, LDTest)
 {
     uint32_t raw_inst = 0x2363b303;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x7);
     ASSERT_EQ(instr.rd, 0x6);
@@ -406,7 +406,7 @@ TEST_F(DecoderTest, LBUTest)
 {
     uint32_t raw_inst = 0x2363c303;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x7);
     ASSERT_EQ(instr.rd, 0x6);
@@ -418,7 +418,7 @@ TEST_F(DecoderTest, LHUTest)
 {
     uint32_t raw_inst = 0x2363d303;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x7);
     ASSERT_EQ(instr.rd, 0x6);
@@ -430,7 +430,7 @@ TEST_F(DecoderTest, LWUTest)
 {
     uint32_t raw_inst = 0x2363e303;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x7);
     ASSERT_EQ(instr.rd, 0x6);
@@ -442,7 +442,7 @@ TEST_F(DecoderTest, SBTest)
 {
     uint32_t raw_inst = 0x31990723;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x12);
     ASSERT_EQ(instr.rs2, 0x19);
@@ -454,7 +454,7 @@ TEST_F(DecoderTest, SHTest)
 {
     uint32_t raw_inst = 0x31991723;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x12);
     ASSERT_EQ(instr.rs2, 0x19);
@@ -466,7 +466,7 @@ TEST_F(DecoderTest, SWTest)
 {
     uint32_t raw_inst = 0x31992723;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x12);
     ASSERT_EQ(instr.rs2, 0x19);
@@ -478,7 +478,7 @@ TEST_F(DecoderTest, SDTest)
 {
     uint32_t raw_inst = 0x31993723;
 
-    Instruction instr = decode_.RunImpl(raw_inst);
+    Instruction instr = decode_.DecodeInstr(raw_inst);
 
     ASSERT_EQ(instr.rs1, 0x12);
     ASSERT_EQ(instr.rs2, 0x19);

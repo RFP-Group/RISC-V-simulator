@@ -2,14 +2,20 @@
 #define INTERPRETER_DECODER_H
 
 #include "interpreter/instruction.h"
+#include "interpreter/BB.h"
 
 namespace simulator::interpreter {
 
-constexpr uint32_t OPCODE_MASK = 0x0000007f;
-
 class Decoder final {
 public:
-    [[nodiscard]] Instruction RunImpl(uint32_t raw_inst);
+    [[nodiscard]] Instruction DecodeInstr(uint32_t raw_inst);
+    inline void DecodeBB(const BB &raw_bb, DecodedBB &decoded_bb)
+    {
+        decoded_bb.clear();
+        for (auto curIt = raw_bb.cbegin(), endIt = raw_bb.cend(); curIt != endIt; ++curIt)
+            decoded_bb.add_instr(DecodeInstr(*curIt));
+        decoded_bb.addTerminator();
+    }
 
 private:
 #include "generated/instructions_decode_gen.h"

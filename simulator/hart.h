@@ -6,12 +6,15 @@
 #include "interpreter/fetch.h"
 #include "interpreter/decoder.h"
 #include "interpreter/executor.h"
+#include "interpreter/BB.h"
 
 namespace simulator::core {
 
 class Hart final {
 public:
-    void RunImpl();
+    enum class Mode { SIMPLE, BB };
+
+    void RunImpl(Mode mode);
 
     Hart(mem::VirtualMem *vmem, uintptr_t entry_point) : vmem_(vmem), fetch_(vmem), executor_(vmem_, entry_point) {};
     NO_COPY_SEMANTIC(Hart)

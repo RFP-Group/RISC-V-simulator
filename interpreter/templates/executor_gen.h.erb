@@ -6,6 +6,6 @@
 #include "interpreter/instruction.h"
 
 <%for instruction in @instructions%>
-void exec_<%=get_inst_name(instruction)%>(Instruction inst);<%end%>
+inline void exec_<%=get_inst_name(instruction)%>(Instruction inst);<%end%>
 
 #endif // INTERPRETER_GENERATED_EXECUTOR_GEN_H

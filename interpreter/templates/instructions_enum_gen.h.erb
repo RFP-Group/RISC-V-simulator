@@ -5,6 +5,7 @@
 
 enum InstructionId {<%for instruction in @instructions%>
 	<%=get_inst_name(instruction)%>,<%end%>
+	BB_END_INST,
 	WRONG_INST
 };
 

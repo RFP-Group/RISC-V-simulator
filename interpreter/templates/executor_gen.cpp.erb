@@ -4,10 +4,11 @@
 #include <cstdint>
 #include "interpreter/executor.h"
 #include "interpreter/instruction.h"
+#include "interpreter/BB.h"
 
 namespace simulator::interpreter {
 
-void Executor::RunImpl(Instruction inst) {
+void Executor::RunInstr(Instruction inst) {
 	switch(inst.inst_id) {
 		<%for instruction in @instructions%>
 		case <%=get_inst_name(instruction)%>: exec_<%=get_inst_name(instruction)%>(inst);
@@ -18,4 +19,23 @@ void Executor::RunImpl(Instruction inst) {
 	}
 }
 
-} // namespace simulator
+void Executor::RunBB(const DecodedBB &bb) {
+    auto instr = bb.getBeginBB();
+    static void *dispatch_table[] = { <%for instruction in @instructions%>
+        &&<%=get_inst_name(instruction)%>__,<%end%>
+        &&BB_END_INST__
+    };
+
+    #define DISPATCH()  ++instr; goto *dispatch_table[instr->inst_id];
+
+    goto *dispatch_table[instr->inst_id];
+
+    <%for instruction in @instructions%>
+    <%=get_inst_name(instruction)%>__:
+        exec_<%=get_inst_name(instruction)%>(*instr);
+        DISPATCH();<%end%>
+    BB_END_INST__:
+        return;
+}
+
+} // namespace simulator::interpreter

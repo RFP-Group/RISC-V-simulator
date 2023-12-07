@@ -1,3 +1,6 @@
+#ifndef INTERPRETER_EXECUTOR_IMPL_H
+#define INTERPRETER_EXECUTOR_IMPL_H
+
 #include "interpreter/executor.h"
 #include "interpreter/gpr.h"
 #include "interpreter/instruction.h"
@@ -1276,3 +1279,5 @@ void Executor::exec_FNMADD_Q([[maybe_unused]] Instruction inst)
 }
 
 }  // namespace simulator::interpreter
+
+#endif  // INTERPRETER_EXECUTOR_IMPL_H

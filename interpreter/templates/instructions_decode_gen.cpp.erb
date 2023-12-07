@@ -7,7 +7,7 @@
 
 namespace simulator::interpreter {
 
-Instruction Decoder::RunImpl (uint32_t raw_inst) {
+Instruction Decoder::DecodeInstr (uint32_t raw_inst) {
 	Instruction instr;
 	<%=generate_switch_case(@decodertree, "", 0)%>
 	return instr;
@@ -26,4 +26,4 @@ Instruction Decoder::RunImpl (uint32_t raw_inst) {
 <%="}"%>
 <%end%>
 
-} // namespace simulator
+} // namespace simulator::interpreter
