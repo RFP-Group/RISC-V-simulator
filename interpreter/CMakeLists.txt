@@ -3,8 +3,9 @@ file(MAKE_DIRECTORY ${PROJECT_BINARY_ROOT}/interpreter/generated)
 set(INTERPRETER_SOURCES
 	${CMAKE_CURRENT_BINARY_DIR}/generated/instructions_decode_gen.cpp
 	${CMAKE_CURRENT_BINARY_DIR}/generated/executor_gen.cpp
-	executor_impl.cpp
 )
+
+set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/generated/executor_gen.cpp PROPERTIES COMPILE_FLAGS -Wno-pedantic)
 
 add_library(interpreter STATIC ${INTERPRETER_SOURCES})
 
@@ -23,6 +24,7 @@ gen_file(
 	OUTPUT ${INSTRUCTION_DECODE_GEN_CPP}
 )
 add_custom_target(interpreter_decode_cpp_gen DEPENDS ${INSTRUCTION_DECODE_GEN_CPP})
+add_dependencies(generate_all interpreter_decode_cpp_gen)
 
 set(INSTRUCTION_DECODE_GEN_H ${CMAKE_CURRENT_BINARY_DIR}/generated/instructions_decode_gen.h)
 gen_file(
@@ -31,6 +33,7 @@ gen_file(
 	OUTPUT ${INSTRUCTION_DECODE_GEN_H}
 )
 add_custom_target(interpreter_decode_h_gen DEPENDS ${INSTRUCTION_DECODE_GEN_H})
+add_dependencies(generate_all interpreter_decode_h_gen)
 
 set(INSTRUCTION_ENUM_GEN_H ${CMAKE_CURRENT_BINARY_DIR}/generated/instructions_enum_gen.h)
 gen_file(
@@ -39,6 +42,7 @@ gen_file(
 	OUTPUT ${INSTRUCTION_ENUM_GEN_H}
 )
 add_custom_target(interpreter_enum_h_gen DEPENDS ${INSTRUCTION_ENUM_GEN_H})
+add_dependencies(generate_all interpreter_enum_h_gen)
 
 set(EXECUTOR_CPP ${CMAKE_CURRENT_BINARY_DIR}/generated/executor_gen.cpp)
 gen_file(
@@ -47,6 +51,7 @@ gen_file(
 	OUTPUT ${EXECUTOR_CPP}
 )
 add_custom_target(interpreter_executor_cpp_gen DEPENDS ${EXECUTOR_CPP})
+add_dependencies(generate_all interpreter_executor_cpp_gen)
 
 set(EXECUTOR_H ${CMAKE_CURRENT_BINARY_DIR}/generated/executor_gen.h)
 gen_file(
@@ -55,6 +60,7 @@ gen_file(
 	OUTPUT ${EXECUTOR_H}
 )
 add_custom_target(interpreter_executor_h_gen DEPENDS ${EXECUTOR_H})
+add_dependencies(generate_all interpreter_executor_h_gen)
 
 target_link_libraries(interpreter mem)
 

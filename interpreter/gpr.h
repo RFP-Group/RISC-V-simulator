@@ -50,11 +50,11 @@ public:
         X32 = 32,
         PC = 33
     };
-    Register read(uint8_t reg_n) const
+    inline Register read(uint8_t reg_n) const
     {
         return gpr_[reg_n];
     }
-    void write(uint8_t reg_n, Register value)
+    inline void write(uint8_t reg_n, Register value)
     {
         gpr_[reg_n] = value;
         gpr_[GPR_n::X0] = 0;

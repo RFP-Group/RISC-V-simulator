@@ -5,6 +5,7 @@
 #include "interpreter/gpr.h"
 #include "interpreter/csr.h"
 #include "memory/includes/virtual_mem.hpp"
+#include "interpreter/BB.h"
 
 namespace simulator::interpreter {
 
@@ -17,18 +18,20 @@ public:
     NO_COPY_SEMANTIC(Executor)
     NO_MOVE_SEMANTIC(Executor)
 
-    void RunImpl(Instruction inst);
+    void RunInstr(Instruction inst);
+    void RunBB(const DecodedBB &bb);
+
     [[nodiscard]] inline Register getPC()
     {
         return gprf_.read(GPR_file::GPR_n::PC);
     };
 
-    const GPR_file &getGPRfile()
+    inline const GPR_file &getGPRfile()
     {
         return gprf_;
     }
 
-    const CSR_file &getCSRfile()
+    inline const CSR_file &getCSRfile()
     {
         return csrf_;
     }
@@ -41,5 +44,7 @@ private:
 };
 
 }  // namespace simulator::interpreter
+
+#include "interpreter/executor_impl.h"
 
 #endif  // INTERPRETER_EXECUTOR_H
