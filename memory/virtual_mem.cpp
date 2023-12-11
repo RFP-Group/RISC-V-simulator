@@ -6,6 +6,7 @@ namespace simulator::mem {
 VirtualMem::VirtualMem()
 {
     ram_ = PhysMem::CreatePhysMem(1_GB);
+    tlb_.resize(TLB_SIZE, {-1, 0});
     assert(ram_ != nullptr);
 }
 
@@ -125,26 +126,51 @@ uint64_t VirtualMem::PageLookUp(uint32_t vpn0, uint32_t vpn1, uint32_t vpn2, uin
     return ((*paddr0_ptr) - 1) * Page::SIZE;
 }
 
+uintptr_t VirtualMem::CheckInTlb(int64_t id, uintptr_t vaddr)
+{
+    id = id % TLB_SIZE;
+    auto pair = tlb_[id];
+    [[likely]] if (pair.first != -1 && pair.second == vaddr)
+    {
+        return pair.first;
+    }
+    return 0;
+}
+
+void VirtualMem::PushToTlb(int64_t id, uintptr_t vaddr, uintptr_t paddr)
+{
+    id = id % TLB_SIZE;
+    tlb_[id] = std::make_pair(paddr, vaddr);
+}
+
 uint8_t *VirtualMem::GetPhysAddrWithAllocation(uintptr_t vaddr)
 {
     // TRANSLATION MODE IS SV48
-    if (!IsVirtAddrCanonical(vaddr)) {
+    [[unlikely]] if (!IsVirtAddrCanonical(vaddr))
+    {
         throw std::runtime_error("Noncanonical address");
     }
 
-    uint32_t vpn3 = GetPartialBitsShifted<39, 47>(vaddr);
-    uint32_t vpn2 = GetPartialBitsShifted<30, 38>(vaddr);
-    uint32_t vpn1 = GetPartialBitsShifted<21, 29>(vaddr);
     uint32_t vpn0 = GetPartialBitsShifted<12, 20>(vaddr);
-    uintptr_t paddr = PageLookUp(vpn0, vpn1, vpn2, vpn3);
+    uint64_t tlb_ind = vpn0;
+    uint64_t vaddr_without_offset = RemoveOffset(vaddr);
+    uintptr_t paddr = CheckInTlb(tlb_ind, vaddr_without_offset);
+    [[unlikely]] if (paddr == 0)
+    {
+        uint32_t vpn1 = GetPartialBitsShifted<21, 29>(vaddr);
+        uint32_t vpn2 = GetPartialBitsShifted<30, 38>(vaddr);
+        uint32_t vpn3 = GetPartialBitsShifted<39, 47>(vaddr);
+        paddr = PageLookUp(vpn0, vpn1, vpn2, vpn3);
+        PushToTlb(tlb_ind, vaddr_without_offset, paddr);
+    }
 
-    paddr += vaddr & Page::OFFSET_MASK;
+    paddr += GetPageOffsetByAddress(vaddr);
     return ToNativePtr<uint8_t>(ToUintPtr<uint8_t>(ram_->GetMemPointer()) + paddr);
 }
 
 bool VirtualMem::IsVirtAddrCanonical(uintptr_t vaddr) const
 {
-    static constexpr const uint64_t ADDRESS_UPPER_BITS_MASK_SV48 = 0xFFFF800000000000;
+    static constexpr uint64_t ADDRESS_UPPER_BITS_MASK_SV48 = 0xFFFF800000000000;
     uint64_t val = vaddr & ADDRESS_UPPER_BITS_MASK_SV48;
     if (val == 0 || val == ADDRESS_UPPER_BITS_MASK_SV48) {
         return true;
@@ -152,14 +178,14 @@ bool VirtualMem::IsVirtAddrCanonical(uintptr_t vaddr) const
     return false;
 }
 
-uint64_t VirtualMem::GetPageIdByAddress(uintptr_t addr) const
-{
-    return (addr & Page::ID_MASK) >> Page::OFFSET_BIT_LENGTH;
-}
-
 uint64_t VirtualMem::GetPageOffsetByAddress(uintptr_t addr) const
 {
     return addr & Page::OFFSET_MASK;
+}
+
+uint64_t VirtualMem::RemoveOffset(uintptr_t addr) const
+{
+    return addr & (~Page::OFFSET_MASK);
 }
 
 void VirtualMem::StoreTwoBytesFast(uintptr_t addr, uint16_t value)
@@ -214,7 +240,7 @@ uintptr_t VirtualMem::StoreElfFile(const std::string &name)
     if (gelf_getehdr(e, &ehdr) == NULL)
         throw std::runtime_error("gelf_getehdr() failed " + std::string(elf_errmsg(-1)));
 
-    validateElfHeader(ehdr);
+    ValidateElfHeader(ehdr);
 
     size_t n;
     if (elf_getphdrnum(e, &n) != 0)
@@ -244,7 +270,7 @@ uintptr_t VirtualMem::StoreElfFile(const std::string &name)
     return ehdr.e_entry;
 }
 
-void VirtualMem::validateElfHeader(const GElf_Ehdr &ehdr) const
+void VirtualMem::ValidateElfHeader(const GElf_Ehdr &ehdr) const
 {
 #define checkHeaderField(offset, value) \
     if (ehdr.offset != value)           \
