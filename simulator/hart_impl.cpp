@@ -19,12 +19,18 @@ void Hart::RunImpl(Mode mode)
         }
         case Mode::BB: {
             interpreter::BB raw_bb;
-            interpreter::DecodedBB decodedBB;
+            Register cache_addr;
             do {
-                fetch_.loadBB(executor_.getPC(), raw_bb);
-                decoder_.DecodeBB(raw_bb, decodedBB);
+                cache_addr = executor_.getPC() / 4 % BB_CACHE_SIZE;
+                auto &&[addr, decodedBB] = bb_cache_[cache_addr];
+                [[unlikely]] if (addr != executor_.getPC())
+                {
+                    fetch_.loadBB(executor_.getPC(), raw_bb);
+                    decoder_.DecodeBB(raw_bb, decodedBB);
+                    addr = executor_.getPC();
+                }
                 executor_.RunBB(decodedBB);
-                counter += raw_bb.size();
+                counter += decodedBB.size();
             } while (executor_.getPC() != 0);
 
             break;
