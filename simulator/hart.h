@@ -12,9 +12,9 @@ namespace simulator::core {
 
 class Hart final {
 public:
-    enum class Mode { SIMPLE, BB };
+    enum class Mode { NONE, SIMPLE, BB };
 
-    void RunImpl(Mode mode);
+    void RunImpl(Mode mode, bool need_to_measure);
 
     Hart(mem::VirtualMem *vmem, uintptr_t entry_point) : vmem_(vmem), fetch_(vmem), executor_(vmem_, entry_point) {};
     NO_COPY_SEMANTIC(Hart)

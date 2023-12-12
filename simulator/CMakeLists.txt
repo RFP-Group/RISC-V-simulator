@@ -11,7 +11,7 @@ set(SOURCES
 
 add_executable(rvsim ${SOURCES})
 target_include_directories(rvsim PUBLIC ${PROJECT_ROOT}/memory/includes ${PROJECT_ROOT}/configs)
-target_link_libraries(rvsim PUBLIC core mem interpreter)
+target_link_libraries(rvsim PRIVATE core mem interpreter CLI11)
 
 add_custom_target(
     run_rvsim
