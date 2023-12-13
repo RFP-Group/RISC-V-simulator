@@ -44,7 +44,10 @@ if (NOT INSTALL_RES EQUAL 0)
 endif()
 
 add_subdirectory(simulator)
+
 add_subdirectory(third-party/googletest)
+add_subdirectory(third-party/CLI11)
+
 add_subdirectory(memory)
 add_subdirectory(interpreter)
 add_subdirectory(tests)
