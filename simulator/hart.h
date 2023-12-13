@@ -7,6 +7,8 @@
 #include "interpreter/decoder.h"
 #include "interpreter/executor.h"
 #include "interpreter/BB.h"
+#include <array>
+#include <utility>
 
 namespace simulator::core {
 
@@ -25,6 +27,8 @@ private:
     interpreter::Fetch fetch_;
     interpreter::Decoder decoder_;
     interpreter::Executor executor_;
+    static constexpr size_t BB_CACHE_SIZE = 256;
+    std::array<std::pair<Register, interpreter::DecodedBB>, BB_CACHE_SIZE> bb_cache_;
 };
 
 }  // namespace simulator::core

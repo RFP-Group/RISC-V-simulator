@@ -62,7 +62,11 @@ public:
     }
     inline void addTerminator()
     {
-        body_[curSize++] = Instruction {.inst_id = BB_END_INST};
+        body_[curSize] = Instruction {.inst_id = BB_END_INST};
+    }
+    inline size_t size() const
+    {
+        return curSize;
     }
 };
 
