@@ -4,6 +4,7 @@
 #include "interpreter/instruction.h"
 #include <array>
 #include <cstdint>
+#include <cstddef>
 
 namespace simulator {
 
@@ -58,6 +59,9 @@ public:
     {
         gpr_[reg_n] = value;
         gpr_[GPR_n::X0] = 0;
+    }
+    inline static auto getOffsetToStartOfRegisters() {
+        return offsetof(GPR_file, gpr_);
     }
 
 private:

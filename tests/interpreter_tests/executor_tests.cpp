@@ -22,7 +22,7 @@ TEST_F(ExecutorTest, LUITest)
     // lui x3, 0x5a000
     Instruction lui = {0, 0, 0, GPR_file::X3, 0, 0x5a000, 55, InstructionId::LUI};
 
-    exec_.RunInstr(lui);
+    exec_.RunInstr(&lui);
 
     auto gpr = exec_.getGPRfile();
     ASSERT_EQ(gpr.read(GPR_file::X3), 0x5a000);
@@ -34,7 +34,7 @@ TEST_F(ExecutorTest, AUIPCTest)
     // auipc x3, 0x34f0
     Instruction auipc = {0, 0, 0, GPR_file::X3, 0, 0x34f0, 23, InstructionId::AUIPC};
 
-    exec_.RunInstr(auipc);
+    exec_.RunInstr(&auipc);
 
     auto gpr = exec_.getGPRfile();
     ASSERT_EQ(gpr.read(GPR_file::X3), 0x34f0000);
@@ -46,7 +46,7 @@ TEST_F(ExecutorTest, JALTest)
     // jal x3, 0x200
     Instruction jal = {0, 0, 0, GPR_file::X7, 0, 0x200, 111, InstructionId::JAL};
 
-    exec_.RunInstr(jal);
+    exec_.RunInstr(&jal);
 
     auto gpr = exec_.getGPRfile();
     ASSERT_EQ(gpr.read(GPR_file::X7), 0x4);
@@ -61,7 +61,7 @@ TEST_F(ExecutorTest, JALRTest)
                                              {GPR_file::X4, 0, 0, GPR_file::X7, 0, 0x300, 103, InstructionId::JALR}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -84,7 +84,7 @@ TEST_F(ExecutorTest, BEQTest)
                                              {GPR_file::X4, GPR_file::X6, 0, 0, 0, 0x300, 99, InstructionId::BEQ}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -108,7 +108,7 @@ TEST_F(ExecutorTest, BNETest)
                                              {GPR_file::X4, GPR_file::X5, 0, 0, 0, 0x300, 99, InstructionId::BNE}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -132,7 +132,7 @@ TEST_F(ExecutorTest, BLTTest)
                                              {GPR_file::X4, GPR_file::X5, 0, 0, 0, 0x300, 99, InstructionId::BLT}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -156,7 +156,7 @@ TEST_F(ExecutorTest, BGETest)
                                              {GPR_file::X4, GPR_file::X6, 0, 0, 0, 0x300, 99, InstructionId::BLT}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -175,7 +175,7 @@ TEST_F(ExecutorTest, SLTITest)
         {GPR_file::X4, 0, 0, GPR_file::X7, 0, 4, 19, InstructionId::SLTI}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -192,7 +192,7 @@ TEST_F(ExecutorTest, SLTIUTest)
                                              {GPR_file::X4, 0, 0, GPR_file::X7, 0, 4, 19, InstructionId::SLTI}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -209,7 +209,7 @@ TEST_F(ExecutorTest, XORITest)
                                              {GPR_file::X4, 0, 0, GPR_file::X7, 0, 0xff, 19, InstructionId::XORI}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -226,7 +226,7 @@ TEST_F(ExecutorTest, ANDITest)
                                              {GPR_file::X4, 0, 0, GPR_file::X7, 0, 0x3d, 19, InstructionId::ANDI}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -243,7 +243,7 @@ TEST_F(ExecutorTest, ORITest)
                                              {GPR_file::X4, 0, 0, GPR_file::X7, 0, 0x3d, 19, InstructionId::ORI}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -260,7 +260,7 @@ TEST_F(ExecutorTest, SLLITest)
                                              {GPR_file::X4, 0, 0, GPR_file::X7, 0, 0x500000, 19, InstructionId::SLLI}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -277,7 +277,7 @@ TEST_F(ExecutorTest, SRLITest)
                                              {GPR_file::X4, 0, 0, GPR_file::X7, 0, 0x500000, 19, InstructionId::SRLI}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -294,7 +294,7 @@ TEST_F(ExecutorTest, SRAITest)
                                              {GPR_file::X4, 0, 0, GPR_file::X7, 0, 0x500000, 19, InstructionId::SRAI}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -314,7 +314,7 @@ TEST_F(ExecutorTest, ADDTest)
         {GPR_file::X4, GPR_file::X9, 0, GPR_file::X7, 0, 0, 51, InstructionId::ADD}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -335,7 +335,7 @@ TEST_F(ExecutorTest, SUBTest)
         {GPR_file::X4, GPR_file::X9, 0, GPR_file::X7, 0, 0, 51, InstructionId::SUB}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -356,7 +356,7 @@ TEST_F(ExecutorTest, SLLTest)
         {GPR_file::X4, GPR_file::X9, 0, GPR_file::X7, 0, 0, 51, InstructionId::SLL}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -377,7 +377,7 @@ TEST_F(ExecutorTest, SRLTest)
         {GPR_file::X4, GPR_file::X9, 0, GPR_file::X7, 0, 0, 51, InstructionId::SRL}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -398,7 +398,7 @@ TEST_F(ExecutorTest, SRATest)
         {GPR_file::X4, GPR_file::X9, 0, GPR_file::X7, 0, 0, 51, InstructionId::SRA}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -419,7 +419,7 @@ TEST_F(ExecutorTest, SLTTest)
         {GPR_file::X4, GPR_file::X9, 0, GPR_file::X7, 0, 0, 19, InstructionId::SLT}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -440,7 +440,7 @@ TEST_F(ExecutorTest, SLTUTest)
         {GPR_file::X4, GPR_file::X9, 0, GPR_file::X7, 0, 0, 19, InstructionId::SLTU}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -461,7 +461,7 @@ TEST_F(ExecutorTest, XORTest)
         {GPR_file::X4, GPR_file::X9, 0, GPR_file::X7, 0, 0, 0, InstructionId::XOR}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -482,7 +482,7 @@ TEST_F(ExecutorTest, ANDTest)
         {GPR_file::X4, GPR_file::X9, 0, GPR_file::X7, 0, 0, 0, InstructionId::AND}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -502,7 +502,7 @@ TEST_F(ExecutorTest, ORTest)
                                              {GPR_file::X4, GPR_file::X9, 0, GPR_file::X7, 0, 0, 0, InstructionId::OR}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -522,7 +522,7 @@ TEST_F(ExecutorTest, SW_LWTest)
                                              {GPR_file::X4, 0, 0, GPR_file::X9, 0, 0, 0, InstructionId::OR}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     auto gpr = exec_.getGPRfile();
 
@@ -561,7 +561,7 @@ TEST_F(ExecutorTest, CSRTest)
         {GPR_file::X5, 0, 0, GPR_file::X0, 0, CSR_file::MSTATUS, 0, InstructionId::CSRRW}};
 
     for (auto &&instr : instructions)
-        exec_.RunInstr(instr);
+        exec_.RunInstr(&instr);
 
     CSR_file csr = exec_.getCSRfile();
     ASSERT_EQ(csr.read(CSR_file::MSTATUS), 1);

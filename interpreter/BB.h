@@ -1,11 +1,15 @@
 #ifndef INTERPRETER_BB_H
 #define INTERPRETER_BB_H
 
+// #include "interpreter/executor.h"
 #include "interpreter/instruction.h"
 #include <algorithm>
 #include <array>
+#include <cstdint>
 
 namespace simulator::interpreter {
+
+class Executor;
 
 class BB final {
 public:
@@ -42,8 +46,18 @@ public:
 };
 
 class DecodedBB final {
+public:
+    using CompiledEntry = void (*)(Executor *, const Instruction *);
+    enum class CompileStatus : uint8_t {
+        COMPILED,
+        RAW
+    };
+private:
     size_t curSize = 0;
+    size_t hotness_counter_ = 0;
     std::array<Instruction, BB::MAX_SIZE + 1> body_;
+    CompiledEntry compiled_entry_ = nullptr;
+    CompileStatus comp_status_ = CompileStatus::RAW;
 
 public:
     [[nodiscard]] inline auto getBeginBB() const
@@ -67,6 +81,33 @@ public:
     inline size_t size() const
     {
         return curSize;
+    }
+    inline void incrementHotness() {
+        hotness_counter_++;
+    }
+    inline auto getHotness() {
+        return hotness_counter_;
+    }
+    inline auto getCompileStatus() {
+        return comp_status_;
+    }
+    inline void setCompileStatus(CompileStatus comp_status) {
+        comp_status_ = comp_status;
+    }
+    inline auto getCompiledEntry() {
+        return compiled_entry_;
+    }
+    inline void setCompiledEntry(auto compiled_entry) {
+        compiled_entry_ = compiled_entry;
+    }
+    inline auto getRawData() {
+        return body_.data();
+    }
+    const auto &getBody() const {
+        return body_;
+    }
+    auto &getBody(){
+        return body_;
     }
 };
 

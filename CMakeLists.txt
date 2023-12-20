@@ -43,6 +43,10 @@ if (NOT INSTALL_RES EQUAL 0)
 	message(FATAL_ERROR "Unable to install required third-party dependencies")
 endif()
 
+set(ASMJIT_DIR "${PROJECT_THIRD_PARTY}/asmjit")
+include("${ASMJIT_DIR}/CMakeLists.txt")
+
+add_subdirectory(compiler)
 add_subdirectory(simulator)
 
 add_subdirectory(third-party/googletest)

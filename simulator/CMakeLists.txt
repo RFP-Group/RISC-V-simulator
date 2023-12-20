@@ -3,7 +3,7 @@ set(CORE_SOURCES
 )
 
 add_library(core STATIC ${CORE_SOURCES})
-target_link_libraries(core PUBLIC mem interpreter)
+target_link_libraries(core PUBLIC mem interpreter asmjit_compiler)
 
 set(SOURCES
     simulator.cpp
@@ -11,7 +11,7 @@ set(SOURCES
 
 add_executable(rvsim ${SOURCES})
 target_include_directories(rvsim PUBLIC ${PROJECT_ROOT}/memory/includes ${PROJECT_ROOT}/configs)
-target_link_libraries(rvsim PRIVATE core mem interpreter CLI11)
+target_link_libraries(rvsim PRIVATE core mem interpreter CLI11 compiler)
 
 add_custom_target(
     run_rvsim

@@ -1,6 +1,7 @@
 #ifndef INTERPRETER_HART_H
 #define INTERPRETER_HART_H
 
+#include "compiler/compiler.hpp"
 #include "macros.hpp"
 #include "mmu.hpp"
 #include "interpreter/fetch.h"
@@ -25,6 +26,7 @@ public:
 
 private:
     mem::MMU *mmu_;
+    compiler::Compiler compiler_;
     interpreter::Fetch fetch_;
     interpreter::Decoder decoder_;
     interpreter::Executor executor_;

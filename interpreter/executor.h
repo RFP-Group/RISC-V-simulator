@@ -19,7 +19,7 @@ public:
     NO_COPY_SEMANTIC(Executor)
     NO_MOVE_SEMANTIC(Executor)
 
-    void RunInstr(Instruction inst);
+    void RunInstr(const Instruction *inst);
     void RunBB(const DecodedBB &bb);
 
     void GetTrace(const simulator::Instruction *cur_instr);
@@ -39,6 +39,10 @@ public:
         return csrf_;
     }
 
+    inline static auto getOffsetToGprf() {
+        return offsetof(interpreter::Executor, gprf_);
+    }
+
 private:
 #include "generated/executor_gen.h"
     GPR_file gprf_;
@@ -46,6 +50,10 @@ private:
     mem::MMU *mmu_;
     bool is_cosim_ = false;
 };
+
+inline void runInstrIface(Executor *executor, const Instruction *inst) {
+    executor->RunInstr(inst);
+}
 
 }  // namespace simulator::interpreter
 
