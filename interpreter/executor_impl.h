@@ -491,7 +491,7 @@ void Executor::exec_LB([[maybe_unused]] Instruction inst)
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    int8_t val = GetSignedForm<uint8_t>(vmem_->LoadByte(addr));
+    int8_t val = GetSignedForm<uint8_t>(mmu_->LoadByte(addr));
     Register res = GetSignedExtension<Register, 8>(GetUnsignedForm<int8_t>(val));
     gprf_.write(rd, res);
     NEXT()
@@ -505,7 +505,7 @@ void Executor::exec_LH([[maybe_unused]] Instruction inst)
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    int16_t val = GetSignedForm<uint16_t>(vmem_->LoadTwoBytesFast(addr));
+    int16_t val = GetSignedForm<uint16_t>(mmu_->LoadTwoBytesFast(addr));
     Register res = GetSignedExtension<Register, 16>(GetUnsignedForm<int16_t>(val));
     gprf_.write(rd, res);
     NEXT()
@@ -519,7 +519,7 @@ void Executor::exec_LW([[maybe_unused]] Instruction inst)
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    int32_t val = GetSignedForm<uint32_t>(vmem_->LoadFourBytesFast(addr));
+    int32_t val = GetSignedForm<uint32_t>(mmu_->LoadFourBytesFast(addr));
     Register res = GetSignedExtension<Register, 32>(GetUnsignedForm<int32_t>(val));
     gprf_.write(rd, res);
     NEXT()
@@ -533,7 +533,7 @@ void Executor::exec_LD([[maybe_unused]] Instruction inst)
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    SRegister val = GetSignedForm<Register>(vmem_->LoadEightBytesFast(addr));
+    SRegister val = GetSignedForm<Register>(mmu_->LoadEightBytesFast(addr));
     Register res = GetUnsignedForm<SRegister>(val);
     gprf_.write(rd, res);
     NEXT()
@@ -549,7 +549,7 @@ void Executor::exec_SB([[maybe_unused]] Instruction inst)
     Register addr = rs1_val + signed_imm;
     Register rs2_val = gprf_.read(rs2);
     uint8_t val = static_cast<uint8_t>(rs2_val);
-    vmem_->StoreByte(addr, val);
+    mmu_->StoreByte(addr, val);
     NEXT()
 }
 
@@ -563,7 +563,7 @@ void Executor::exec_SH([[maybe_unused]] Instruction inst)
     Register addr = rs1_val + signed_imm;
     Register rs2_val = gprf_.read(rs2);
     uint16_t val = static_cast<uint16_t>(rs2_val);
-    vmem_->StoreTwoBytesFast(addr, val);
+    mmu_->StoreTwoBytesFast(addr, val);
     NEXT()
 }
 
@@ -577,7 +577,7 @@ void Executor::exec_SW([[maybe_unused]] Instruction inst)
     Register addr = rs1_val + signed_imm;
     Register rs2_val = gprf_.read(rs2);
     uint32_t val = static_cast<uint32_t>(rs2_val);
-    vmem_->StoreFourBytesFast(addr, val);
+    mmu_->StoreFourBytesFast(addr, val);
     NEXT()
 }
 
@@ -591,7 +591,7 @@ void Executor::exec_SD([[maybe_unused]] Instruction inst)
     Register addr = rs1_val + signed_imm;
     Register rs2_val = gprf_.read(rs2);
     Register val = static_cast<Register>(rs2_val);
-    vmem_->StoreEightBytesFast(addr, val);
+    mmu_->StoreEightBytesFast(addr, val);
     NEXT()
 }
 
@@ -603,7 +603,7 @@ void Executor::exec_LBU([[maybe_unused]] Instruction inst)
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    Register res = vmem_->LoadByte(addr);
+    Register res = mmu_->LoadByte(addr);
     gprf_.write(rd, res);
     NEXT()
 }
@@ -616,7 +616,7 @@ void Executor::exec_LHU([[maybe_unused]] Instruction inst)
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    Register res = vmem_->LoadTwoBytesFast(addr);
+    Register res = mmu_->LoadTwoBytesFast(addr);
     gprf_.write(rd, res);
     NEXT()
 }
@@ -629,7 +629,7 @@ void Executor::exec_LWU([[maybe_unused]] Instruction inst)
     Register signed_imm = GetSignedExtension<Register, 12>(imm);
     Register rs1_val = gprf_.read(rs1);
     Register addr = rs1_val + signed_imm;
-    Register res = vmem_->LoadFourBytesFast(addr);
+    Register res = mmu_->LoadFourBytesFast(addr);
     gprf_.write(rd, res);
     NEXT()
 }
@@ -642,7 +642,7 @@ void Executor::exec_ECALL([[maybe_unused]] Instruction inst)
             Register addr = gprf_.read(GPR_file::GPR_n::X11);
             Register length = gprf_.read(GPR_file::GPR_n::X12);
 
-            std::vector<uint8_t> out_vector = vmem_->LoadByteSequence(addr, length);
+            std::vector<uint8_t> out_vector = mmu_->LoadByteSequence(addr, length);
             std::string out_str(out_vector.begin(), out_vector.end());
             std::cout << out_str;
             break;

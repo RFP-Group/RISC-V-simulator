@@ -1,23 +1,22 @@
-#ifndef MEMORY_INCLUDES_VIRTUAL_MEM
-#define MEMORY_INCLUDES_VIRTUAL_MEM
+#ifndef MEMORY_INCLUDES_MMU_HPP
+#define MEMORY_INCLUDES_MMU_HPP
 
 #include <gelf.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <unordered_map>
 #include "phys_mem.hpp"
 
 namespace simulator::mem {
 
-class VirtualMem final {
+class MMU final {
 public:
     static constexpr size_t PTE_SIZE = 8;
     static constexpr size_t TLB_SIZE = 4096;
-    NO_COPY_SEMANTIC(VirtualMem)
-    NO_MOVE_SEMANTIC(VirtualMem)
+    NO_COPY_SEMANTIC(MMU)
+    NO_MOVE_SEMANTIC(MMU)
 
-    [[nodiscard]] static VirtualMem *CreateVirtualMem();
-    static bool Destroy(VirtualMem *virtual_mem);
+    [[nodiscard]] static MMU *CreateMMU();
+    static bool Destroy(MMU *mmu);
     bool StoreByteSequence(uintptr_t addr, uint8_t *chrs, uint64_t length);
     std::vector<uint8_t> LoadByteSequence(uintptr_t addr, uint64_t length);
     void StoreByte(uintptr_t addr, uint8_t chr);
@@ -31,8 +30,8 @@ public:
     [[nodiscard]] uintptr_t StoreElfFile(const std::string &name);
 
 private:
-    VirtualMem();
-    ~VirtualMem();
+    MMU();
+    ~MMU();
     inline uint64_t GetPageOffsetByAddress(uintptr_t addr) const;
     inline uint64_t RemoveOffset(uintptr_t addr) const;
     uint64_t PageLookUp(uint32_t vpn0, uint32_t vpn1, uint32_t vpn2, uint32_t vpn3);
@@ -48,4 +47,4 @@ private:
 };
 }  // namespace simulator::mem
 
-#endif  // MEMORY_INCLUDES_VIRTUAL_MEM
+#endif  // MEMORY_INCLUDES_MMU_HPP

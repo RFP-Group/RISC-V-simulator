@@ -2,7 +2,7 @@
 #define INTERPRETER_HART_H
 
 #include "macros.hpp"
-#include "virtual_mem.hpp"
+#include "mmu.hpp"
 #include "interpreter/fetch.h"
 #include "interpreter/decoder.h"
 #include "interpreter/executor.h"
@@ -18,13 +18,13 @@ public:
 
     void RunImpl(Mode mode, bool need_to_measure);
 
-    Hart(mem::VirtualMem *vmem, uintptr_t entry_point, bool is_cosim)
-        : vmem_(vmem), fetch_(vmem), executor_(vmem_, entry_point, is_cosim) {};
+    Hart(mem::MMU *mmu, uintptr_t entry_point, bool is_cosim)
+        : mmu_(mmu), fetch_(mmu), executor_(mmu_, entry_point, is_cosim) {};
     NO_COPY_SEMANTIC(Hart)
     NO_MOVE_SEMANTIC(Hart)
 
 private:
-    mem::VirtualMem *vmem_;
+    mem::MMU *mmu_;
     interpreter::Fetch fetch_;
     interpreter::Decoder decoder_;
     interpreter::Executor executor_;

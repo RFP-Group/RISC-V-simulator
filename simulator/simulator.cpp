@@ -1,6 +1,6 @@
 #include <iostream>
 #include "hart.h"
-#include "virtual_mem.hpp"
+#include "mmu.hpp"
 
 #include <CLI/CLI.hpp>
 #include <CLI/App.hpp>
@@ -42,9 +42,9 @@ int Main(int argc, const char **argv)
 
     CLI11_PARSE(app, argc, argv);
 
-    mem::VirtualMem *vmem = mem::VirtualMem::CreateVirtualMem();
-    uintptr_t entry_point = vmem->StoreElfFile(input_file);
-    core::Hart hart(vmem, entry_point, is_cosim);
+    mem::MMU *mmu = mem::MMU::CreateMMU();
+    uintptr_t entry_point = mmu->StoreElfFile(input_file);
+    core::Hart hart(mmu, entry_point, is_cosim);
     hart.RunImpl(getMode(mode), need_to_measure);
     return 0;
 }
