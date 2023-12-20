@@ -9,7 +9,7 @@ namespace simulator {
 class ExecutorTest : public ::testing::Test {
 protected:
     mem::VirtualMem *virtual_mem = mem::VirtualMem::CreateVirtualMem();
-    interpreter::Executor exec_ {virtual_mem, 0};
+    interpreter::Executor exec_ {virtual_mem, 0, false};
 
     void TearDown() override
     {

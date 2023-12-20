@@ -35,11 +35,16 @@ int Main(int argc, const char **argv)
         app.add_option("--measure", need_to_measure, "Pass some true value if need to measure time");
     need_to_measure_arg->default_val(false);
 
+    bool is_cosim {};
+    auto *is_cosim_arg =
+        app.add_option("--cosimulation", is_cosim, "Pass some true value if need to get trace of instructions");
+    is_cosim_arg->default_val(false);
+
     CLI11_PARSE(app, argc, argv);
 
     mem::VirtualMem *vmem = mem::VirtualMem::CreateVirtualMem();
     uintptr_t entry_point = vmem->StoreElfFile(input_file);
-    core::Hart hart(vmem, entry_point);
+    core::Hart hart(vmem, entry_point, is_cosim);
     hart.RunImpl(getMode(mode), need_to_measure);
     return 0;
 }

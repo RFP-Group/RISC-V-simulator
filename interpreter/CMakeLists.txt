@@ -3,6 +3,7 @@ file(MAKE_DIRECTORY ${PROJECT_BINARY_ROOT}/interpreter/generated)
 set(INTERPRETER_SOURCES
 	${CMAKE_CURRENT_BINARY_DIR}/generated/instructions_decode_gen.cpp
 	${CMAKE_CURRENT_BINARY_DIR}/generated/executor_gen.cpp
+	executor_cosim.cpp
 )
 
 set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/generated/executor_gen.cpp PROPERTIES COMPILE_FLAGS -Wno-pedantic)

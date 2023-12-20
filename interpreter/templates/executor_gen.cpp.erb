@@ -8,10 +8,11 @@
 
 namespace simulator::interpreter {
 
-void Executor::RunInstr(Instruction inst) {
-	switch(inst.inst_id) {
+void Executor::RunInstr(Instruction instr) {
+	switch(instr.inst_id) {
 		<%for instruction in @instructions%>
-		case <%=get_inst_name(instruction)%>: exec_<%=get_inst_name(instruction)%>(inst);
+		case <%=get_inst_name(instruction)%>: if (is_cosim_) GetTrace(&instr);
+											  exec_<%=get_inst_name(instruction)%>(instr);
 			break;<%end%>
 		default:
 			std::cerr << "Unsupported instruction type" << std::endl;
@@ -32,6 +33,7 @@ void Executor::RunBB(const DecodedBB &bb) {
 
     <%for instruction in @instructions%>
     <%=get_inst_name(instruction)%>__:
+        if (is_cosim_) GetTrace(instr);
         exec_<%=get_inst_name(instruction)%>(*instr);
         DISPATCH();<%end%>
     BB_END_INST__:
