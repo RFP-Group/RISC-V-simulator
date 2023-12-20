@@ -6,12 +6,13 @@
 #include "interpreter/csr.h"
 #include "memory/includes/virtual_mem.hpp"
 #include "interpreter/BB.h"
+#include <iostream>
 
 namespace simulator::interpreter {
 
 class Executor {
 public:
-    Executor(mem::VirtualMem *vmem, uintptr_t entry_point) : vmem_(vmem)
+    Executor(mem::VirtualMem *vmem, uintptr_t entry_point, bool is_cosim) : vmem_(vmem), is_cosim_(is_cosim)
     {
         gprf_.write(GPR_file::GPR_n::PC, entry_point);
     };
@@ -20,6 +21,8 @@ public:
 
     void RunInstr(Instruction inst);
     void RunBB(const DecodedBB &bb);
+
+    void GetTrace(const simulator::Instruction *cur_instr);
 
     [[nodiscard]] inline Register getPC()
     {
@@ -41,6 +44,7 @@ private:
     GPR_file gprf_;
     CSR_file csrf_;
     mem::VirtualMem *vmem_;
+    bool is_cosim_ = false;
 };
 
 }  // namespace simulator::interpreter

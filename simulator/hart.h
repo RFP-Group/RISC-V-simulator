@@ -18,7 +18,8 @@ public:
 
     void RunImpl(Mode mode, bool need_to_measure);
 
-    Hart(mem::VirtualMem *vmem, uintptr_t entry_point) : vmem_(vmem), fetch_(vmem), executor_(vmem_, entry_point) {};
+    Hart(mem::VirtualMem *vmem, uintptr_t entry_point, bool is_cosim)
+        : vmem_(vmem), fetch_(vmem), executor_(vmem_, entry_point, is_cosim) {};
     NO_COPY_SEMANTIC(Hart)
     NO_MOVE_SEMANTIC(Hart)
 

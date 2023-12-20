@@ -1,4 +1,5 @@
 #include "hart.h"
+#include "interpreter/gpr.h"
 
 #include <iostream>
 #include <chrono>
