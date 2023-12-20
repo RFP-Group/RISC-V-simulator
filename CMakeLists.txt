@@ -5,7 +5,7 @@ enable_language(CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 set(PROJECT_ROOT ${PROJECT_SOURCE_DIR})
@@ -43,6 +43,10 @@ if (NOT INSTALL_RES EQUAL 0)
 	message(FATAL_ERROR "Unable to install required third-party dependencies")
 endif()
 
+set(ASMJIT_DIR "${PROJECT_THIRD_PARTY}/asmjit")
+include("${ASMJIT_DIR}/CMakeLists.txt")
+
+add_subdirectory(compiler)
 add_subdirectory(simulator)
 
 add_subdirectory(third-party/googletest)

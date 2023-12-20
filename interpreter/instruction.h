@@ -15,7 +15,7 @@ constexpr uint32_t OPCODE_MASK = 0x0000007f;
 
 class Instruction final {
 public:
-    Immediate_t GetShamt()
+    Immediate_t GetShamt() const
     {
         return ApplyMaskAndShift<0x03f00000, 20, 0>(imm);
     }

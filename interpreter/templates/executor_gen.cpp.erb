@@ -8,11 +8,11 @@
 
 namespace simulator::interpreter {
 
-void Executor::RunInstr(Instruction instr) {
-	switch(instr.inst_id) {
+void Executor::RunInstr(const Instruction *instr) {
+	switch(instr->inst_id) {
 		<%for instruction in @instructions%>
-		case <%=get_inst_name(instruction)%>: if (is_cosim_) GetTrace(&instr);
-											  exec_<%=get_inst_name(instruction)%>(instr);
+		case <%=get_inst_name(instruction)%>: if (is_cosim_) GetTrace(instr);
+											  exec_<%=get_inst_name(instruction)%>(*instr);
 			break;<%end%>
 		default:
 			std::cerr << "Unsupported instruction type" << std::endl;
