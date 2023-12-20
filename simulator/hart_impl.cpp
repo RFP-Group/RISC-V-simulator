@@ -1,5 +1,6 @@
 #include "hart.h"
 #include "interpreter/gpr.h"
+#include "compiler/compiler.hpp"
 
 #include <iostream>
 #include <chrono>
@@ -17,7 +18,7 @@ void Hart::RunImpl(Mode mode, bool need_to_measure)
             do {
                 uint32_t raw_instr = fetch_.loadInstr(executor_.getPC());
                 auto instr = decoder_.DecodeInstr(raw_instr);
-                executor_.RunInstr(instr);
+                executor_.RunInstr(&instr);
                 ++counter;
             } while (executor_.getPC() != 0);
 
@@ -35,7 +36,19 @@ void Hart::RunImpl(Mode mode, bool need_to_measure)
                     decoder_.DecodeBB(raw_bb, decodedBB);
                     addr = executor_.getPC();
                 }
-                executor_.RunBB(decodedBB);
+                if (decodedBB.getCompileStatus() == interpreter::DecodedBB::CompileStatus::COMPILED) {
+                    auto compiled_entry = decodedBB.getCompiledEntry();
+                    compiled_entry(&executor_, decodedBB.getRawData());
+                } else {
+                    decodedBB.incrementHotness();
+                    if (decodedBB.getHotness() == interpreter::DecodedBB::MAX_HOTNESS) {
+                        compiler_.run(decodedBB, is_cosim_);
+                        auto compiled_entry = decodedBB.getCompiledEntry();
+                        compiled_entry(&executor_, decodedBB.getRawData());
+                        continue;
+                    }
+                    executor_.RunBB(decodedBB);
+                }
                 counter += decodedBB.size();
             } while (executor_.getPC() != 0);
 

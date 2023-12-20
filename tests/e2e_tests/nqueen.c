@@ -1,5 +1,5 @@
 #include "print.h"
-#define N 16
+#define N 20
 
 void printSolution(int board[N][N])
 {
