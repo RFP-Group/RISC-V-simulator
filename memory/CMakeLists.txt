@@ -2,7 +2,7 @@ find_package(LibElf REQUIRED)
 
 set(SOURCES
     phys_mem.cpp
-    virtual_mem.cpp
+    mmu.cpp
     page.cpp
 )
 

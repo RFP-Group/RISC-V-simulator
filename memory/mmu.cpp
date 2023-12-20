@@ -1,36 +1,36 @@
 #include <iostream>
 #include "bitops.h"
-#include "virtual_mem.hpp"
+#include "mmu.hpp"
 
 namespace simulator::mem {
-VirtualMem::VirtualMem()
+MMU::MMU()
 {
     ram_ = PhysMem::CreatePhysMem(1_GB);
     tlb_.resize(TLB_SIZE, {-1, 0});
     assert(ram_ != nullptr);
 }
 
-VirtualMem::~VirtualMem()
+MMU::~MMU()
 {
     assert(ram_ != nullptr);
     PhysMem::Destroy(ram_);
 }
 
 /* static */
-VirtualMem *VirtualMem::CreateVirtualMem()
+MMU *MMU::CreateMMU()
 {
-    return new VirtualMem();
+    return new MMU();
 }
 
 /* static */
-bool VirtualMem::Destroy(VirtualMem *virtual_mem)
+bool MMU::Destroy(MMU *mmu)
 {
-    assert(virtual_mem != nullptr);
-    delete virtual_mem;
+    assert(mmu != nullptr);
+    delete mmu;
     return true;
 }
 
-void VirtualMem::StoreByte(uintptr_t addr, uint8_t chr)
+void MMU::StoreByte(uintptr_t addr, uint8_t chr)
 {
     uint8_t *phys_addr;
     // TODO(Mirageinvo): maybe create derived page_fault exception class?
@@ -46,7 +46,7 @@ void VirtualMem::StoreByte(uintptr_t addr, uint8_t chr)
     *phys_addr = chr;
 }
 
-uint8_t VirtualMem::LoadByte(uintptr_t addr)
+uint8_t MMU::LoadByte(uintptr_t addr)
 {
     uint8_t *phys_addr;
     // TODO(Mirageinvo): maybe create derived page_fault exception class?
@@ -62,7 +62,7 @@ uint8_t VirtualMem::LoadByte(uintptr_t addr)
     return *phys_addr;
 }
 
-bool VirtualMem::StoreByteSequence(uintptr_t addr, uint8_t *chrs, uint64_t length)
+bool MMU::StoreByteSequence(uintptr_t addr, uint8_t *chrs, uint64_t length)
 {
     assert(chrs != nullptr);
     for (uint64_t i = 0; i < length; ++i) {
@@ -71,7 +71,7 @@ bool VirtualMem::StoreByteSequence(uintptr_t addr, uint8_t *chrs, uint64_t lengt
     return true;
 }
 
-std::vector<uint8_t> VirtualMem::LoadByteSequence(uintptr_t addr, uint64_t length)
+std::vector<uint8_t> MMU::LoadByteSequence(uintptr_t addr, uint64_t length)
 {
     std::vector<uint8_t> arr(length);
     for (uint64_t i = 0; i < length; ++i) {
@@ -80,7 +80,7 @@ std::vector<uint8_t> VirtualMem::LoadByteSequence(uintptr_t addr, uint64_t lengt
     return arr;
 }
 
-uint64_t VirtualMem::PageLookUp(uint32_t vpn0, uint32_t vpn1, uint32_t vpn2, uint32_t vpn3)
+uint64_t MMU::PageLookUp(uint32_t vpn0, uint32_t vpn1, uint32_t vpn2, uint32_t vpn3)
 {
     auto mem_ptr = ram_->GetMemPointer();
     uintptr_t paddr0;
@@ -126,7 +126,7 @@ uint64_t VirtualMem::PageLookUp(uint32_t vpn0, uint32_t vpn1, uint32_t vpn2, uin
     return ((*paddr0_ptr) - 1) * Page::SIZE;
 }
 
-uintptr_t VirtualMem::CheckInTlb(int64_t id, uintptr_t vaddr)
+uintptr_t MMU::CheckInTlb(int64_t id, uintptr_t vaddr)
 {
     id = id % TLB_SIZE;
     auto pair = tlb_[id];
@@ -137,13 +137,13 @@ uintptr_t VirtualMem::CheckInTlb(int64_t id, uintptr_t vaddr)
     return 0;
 }
 
-void VirtualMem::PushToTlb(int64_t id, uintptr_t vaddr, uintptr_t paddr)
+void MMU::PushToTlb(int64_t id, uintptr_t vaddr, uintptr_t paddr)
 {
     id = id % TLB_SIZE;
     tlb_[id] = std::make_pair(paddr, vaddr);
 }
 
-uint8_t *VirtualMem::GetPhysAddrWithAllocation(uintptr_t vaddr)
+uint8_t *MMU::GetPhysAddrWithAllocation(uintptr_t vaddr)
 {
     // TRANSLATION MODE IS SV48
     [[unlikely]] if (!IsVirtAddrCanonical(vaddr))
@@ -168,7 +168,7 @@ uint8_t *VirtualMem::GetPhysAddrWithAllocation(uintptr_t vaddr)
     return ToNativePtr<uint8_t>(ToUintPtr<uint8_t>(ram_->GetMemPointer()) + paddr);
 }
 
-bool VirtualMem::IsVirtAddrCanonical(uintptr_t vaddr) const
+bool MMU::IsVirtAddrCanonical(uintptr_t vaddr) const
 {
     static constexpr uint64_t ADDRESS_UPPER_BITS_MASK_SV48 = 0xFFFF800000000000;
     uint64_t val = vaddr & ADDRESS_UPPER_BITS_MASK_SV48;
@@ -178,53 +178,53 @@ bool VirtualMem::IsVirtAddrCanonical(uintptr_t vaddr) const
     return false;
 }
 
-uint64_t VirtualMem::GetPageOffsetByAddress(uintptr_t addr) const
+uint64_t MMU::GetPageOffsetByAddress(uintptr_t addr) const
 {
     return addr & Page::OFFSET_MASK;
 }
 
-uint64_t VirtualMem::RemoveOffset(uintptr_t addr) const
+uint64_t MMU::RemoveOffset(uintptr_t addr) const
 {
     return addr & (~Page::OFFSET_MASK);
 }
 
-void VirtualMem::StoreTwoBytesFast(uintptr_t addr, uint16_t value)
+void MMU::StoreTwoBytesFast(uintptr_t addr, uint16_t value)
 {
     assert(ram_->AtOnePage(GetPageOffsetByAddress(addr), 2));
     *reinterpret_cast<uint16_t *>(GetPhysAddrWithAllocation(addr)) = value;
 }
 
-uint16_t VirtualMem::LoadTwoBytesFast(uintptr_t addr)
+uint16_t MMU::LoadTwoBytesFast(uintptr_t addr)
 {
     assert(ram_->AtOnePage(GetPageOffsetByAddress(addr), 2));
     return *reinterpret_cast<uint16_t *>(GetPhysAddrWithAllocation(addr));
 }
 
-void VirtualMem::StoreFourBytesFast(uintptr_t addr, uint32_t value)
+void MMU::StoreFourBytesFast(uintptr_t addr, uint32_t value)
 {
     assert(ram_->AtOnePage(GetPageOffsetByAddress(addr), 4));
     *reinterpret_cast<uint32_t *>(GetPhysAddrWithAllocation(addr)) = value;
 }
 
-uint32_t VirtualMem::LoadFourBytesFast(uintptr_t addr)
+uint32_t MMU::LoadFourBytesFast(uintptr_t addr)
 {
     assert(ram_->AtOnePage(GetPageOffsetByAddress(addr), 4));
     return *reinterpret_cast<uint32_t *>(GetPhysAddrWithAllocation(addr));
 }
 
-void VirtualMem::StoreEightBytesFast(uintptr_t addr, uint64_t value)
+void MMU::StoreEightBytesFast(uintptr_t addr, uint64_t value)
 {
     assert(ram_->AtOnePage(GetPageOffsetByAddress(addr), 8));
     *reinterpret_cast<uint64_t *>(GetPhysAddrWithAllocation(addr)) = value;
 }
 
-uint64_t VirtualMem::LoadEightBytesFast(uintptr_t addr)
+uint64_t MMU::LoadEightBytesFast(uintptr_t addr)
 {
     assert(ram_->AtOnePage(GetPageOffsetByAddress(addr), 8));
     return *reinterpret_cast<uint64_t *>(GetPhysAddrWithAllocation(addr));
 }
 
-uintptr_t VirtualMem::StoreElfFile(const std::string &name)
+uintptr_t MMU::StoreElfFile(const std::string &name)
 {
     int fd;
     if ((fd = open(name.c_str(), O_RDONLY, 0777)) < 0)
@@ -270,7 +270,7 @@ uintptr_t VirtualMem::StoreElfFile(const std::string &name)
     return ehdr.e_entry;
 }
 
-void VirtualMem::ValidateElfHeader(const GElf_Ehdr &ehdr) const
+void MMU::ValidateElfHeader(const GElf_Ehdr &ehdr) const
 {
 #define checkHeaderField(offset, value) \
     if (ehdr.offset != value)           \

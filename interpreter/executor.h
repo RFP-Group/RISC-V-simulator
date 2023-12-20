@@ -4,7 +4,7 @@
 #include "interpreter/instruction.h"
 #include "interpreter/gpr.h"
 #include "interpreter/csr.h"
-#include "memory/includes/virtual_mem.hpp"
+#include "memory/includes/mmu.hpp"
 #include "interpreter/BB.h"
 #include <iostream>
 
@@ -12,7 +12,7 @@ namespace simulator::interpreter {
 
 class Executor {
 public:
-    Executor(mem::VirtualMem *vmem, uintptr_t entry_point, bool is_cosim) : vmem_(vmem), is_cosim_(is_cosim)
+    Executor(mem::MMU *mmu, uintptr_t entry_point, bool is_cosim) : mmu_(mmu), is_cosim_(is_cosim)
     {
         gprf_.write(GPR_file::GPR_n::PC, entry_point);
     };
@@ -43,7 +43,7 @@ private:
 #include "generated/executor_gen.h"
     GPR_file gprf_;
     CSR_file csrf_;
-    mem::VirtualMem *vmem_;
+    mem::MMU *mmu_;
     bool is_cosim_ = false;
 };
 

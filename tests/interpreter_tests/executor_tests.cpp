@@ -2,18 +2,18 @@
 #include <vector>
 #include <interpreter/executor.h>
 #include "interpreter/gpr.h"
-#include "virtual_mem.hpp"
+#include "mmu.hpp"
 
 namespace simulator {
 
 class ExecutorTest : public ::testing::Test {
 protected:
-    mem::VirtualMem *virtual_mem = mem::VirtualMem::CreateVirtualMem();
-    interpreter::Executor exec_ {virtual_mem, 0, false};
+    mem::MMU *mmu = mem::MMU::CreateMMU();
+    interpreter::Executor exec_ {mmu, 0, false};
 
     void TearDown() override
     {
-        mem::VirtualMem::Destroy(virtual_mem);
+        mem::MMU::Destroy(mmu);
     }
 };
 

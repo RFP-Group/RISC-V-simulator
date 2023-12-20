@@ -1,5 +1,5 @@
 #include "page.hpp"
-#include "virtual_mem.hpp"
+#include "mmu.hpp"
 
 namespace simulator::mem {
 Page::Page()
